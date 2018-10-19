@@ -1,0 +1,67 @@
+---
+title: Federated Learning
+subtitle: Idea, Applications, and 
+author: Daniel Schalk
+date: \today
+output:
+  beamer_presentation:
+    toc: true
+    includes:
+      in_header: "style/preamble_reisensburg.sty"
+    template: "style/custom_pandoc.tex"
+---
+
+# Federated/Decentralized Learning
+
+##
+
+\addtocounter{framenumber}{-1}
+
+Federated Learning as learning on decentralized data with the following properties:
+
+-   **Non-IID** The training data on a given client is typically based on the usage of the mobile device by a particular user, and hence any particular user’s local dataset will not be representative of the population distribution.
+
+-   **Unbalanced** Similarly, some users will make much heavier use of the service or app than others, leading to varying amounts of local training data.
+
+-   **Massively distributed** We expect the number of clients participating in an optimization to be much larger than the average number of examples per client.
+
+-   **Limited communication** Mobile devices are frequently offline or on slow or expensive connections.
+
+## What is it About?
+
+\includegraphics[width=\textwidth,page=1]{images/federated_learning.pdf}
+
+## What is it About?
+
+\includegraphics[width=\textwidth,page=2]{images/federated_learning.pdf}
+\addtocounter{framenumber}{-1}
+
+## What is it About?
+
+\includegraphics[width=\textwidth,page=3]{images/federated_learning.pdf}
+\addtocounter{framenumber}{-1}
+
+## What is it About?
+
+\includegraphics[width=\textwidth,page=4]{images/federated_learning.pdf}
+\addtocounter{framenumber}{-1}
+
+## What is it About?
+
+\includegraphics[width=\textwidth,page=5]{images/federated_learning.pdf}
+\addtocounter{framenumber}{-1}
+
+# Federated Learning of Gradient-Based Methods
+
+## Google Paper
+
+-   Problems
+
+## Federated Averaging
+
+
+# Challenges
+
+## Communication Costs vs. Training Costs
+
+## Evaluation of Federated Learning Systems
