@@ -65,3 +65,11 @@ Federated Learning as learning on decentralized data with the following properti
 ## Communication Costs vs. Training Costs
 
 ## Evaluation of Federated Learning Systems
+
+# Example with Logistic Regression
+
+##
+
+# Boosting and Federated Learning
+
+##
