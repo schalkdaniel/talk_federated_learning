@@ -51,6 +51,11 @@ Federated Learning as learning on decentralized data with the following properti
 \includegraphics[width=\textwidth,page=5]{images/federated_learning.pdf}
 \addtocounter{framenumber}{-1}
 
+## What is it About?
+
+\includegraphics[width=\textwidth,page=6]{images/federated_learning.pdf}
+\addtocounter{framenumber}{-1}
+
 # Federated Learning of Gradient-Based Methods
 
 ## Google Paper
