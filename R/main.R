@@ -8,20 +8,14 @@ source("R/data_generator.R")
 library(tidyverse)
 library(ggthemes)
 
-
-# formula = as.formula("Species ~ Sepal.Length + Sepal.Width + Petal.Length")
-# formula = as.formula("Species ~ Sepal.Length")
-# X = model.matrix(formula, data = iris)
-# y = ifelse(iris$Species == "setosa", 1, 0)
+# IID Dataset
+# ------------------------------------------
 
 set.seed(3141)
 data = simulateBinaryClassif(nrow = 4000, ncol = 2)
 
-X = data$X
+X = as.data.frame(data$data)
 y = data$y
-
-# IID Dataset
-# ------------------------------------------
 
 idx = sample(1:4, nrow(X), replace = TRUE)
 index_list = lapply(1:4, function (x) { idx == x })

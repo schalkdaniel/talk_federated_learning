@@ -11,6 +11,19 @@ output:
     template: "style/custom_pandoc.tex"
 ---
 
+# Terminology
+
+## Distributed Learning
+
+Classical parallelization, advantages:
+
+-   Speed up fitting process
+-   Train model on much more data
+-   Idea behind Spark, Hadoop, ...
+-   Assumption that we already have a database which we want to distribute, hence data of the splits should follow the same distribution 
+
+
+
 # Federated/Decentralized Learning
 
 ##
@@ -55,6 +68,12 @@ Federated Learning as learning on decentralized data with the following properti
 
 \includegraphics[width=\textwidth,page=6]{images/federated_learning.pdf}
 \addtocounter{framenumber}{-1}
+
+## Federated Learning/Decentralized Learning
+
+-   Model comes to the data, not data to the model
+-   Privacy concerning method
+-   ... 
 
 # Federated Learning of Gradient-Based Methods
 
