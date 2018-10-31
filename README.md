@@ -7,7 +7,7 @@
     - [ ] Idea
     - [ ] Problems
     - [ ] Federated Learning using gradient-based methods
-    - [ ] Federated Averaging (Google Paper: Learning on the edge)
+    - [ ] Federated Averaging (Google Paper: Communication-Efficient Learning of Deep Networks from Decentralized Data)
     
 - [ ] Demo: How to train logistic regression in a Federated Learning context
 
