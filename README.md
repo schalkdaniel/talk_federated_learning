@@ -19,5 +19,7 @@
     - [ ] Combining Federated Learning with Differential Privacy
     
 - [ ] Open Questions/Discussion
-    - [ ] 
+    - [ ] Use and transport meta information (like target distribution ...)
+    - [ ] How does different optimizer work in Federated Learning
+    - [ ] ...
     
