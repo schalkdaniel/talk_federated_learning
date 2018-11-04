@@ -83,6 +83,7 @@ Federated Learning as learning on decentralized data with the following properti
 
 ## Federated Averaging
 
+-   Mention problems and how we can tackle them (more steps in one iteration ...)
 
 # Challenges
 
@@ -92,7 +93,11 @@ Federated Learning as learning on decentralized data with the following properti
 
 # Example with Logistic Regression
 
-##
+## Setup
+
+- **Loss Function/Negative Log-Likelihood** \[L\left(y, f(x, \theta)\right) = - y \log\left(f(x, \theta)\right) - (1 - y) * \log\left(1 - f(x, \theta)\right) \]
+- **Response Function** \[f(x) = \left(1 + \exp\left(-x^T\theta\right)\right)^{-1}\]
+- **Score Function** \[\frac{\delta}{\delta\theta}L(y,f\left(x,\theta)\right) = x * \left(y - f(x,\theta)\right)
 
 # Boosting and Federated Learning
 
