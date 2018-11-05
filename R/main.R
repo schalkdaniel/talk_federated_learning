@@ -11,10 +11,10 @@ library(ggthemes)
 # IID Dataset
 # ------------------------------------------
 
-set.seed(3141)
+set.seed(3141592)
 data = simulateBinaryClassif(nrow = 4000, ncol = 2)
 
-X = as.data.frame(data$data)
+X = data$data
 y = data$y
 
 idx = sample(1:4, nrow(X), replace = TRUE)
@@ -30,10 +30,13 @@ index_list = lapply(1:4, function (x) { idx == x })
 # Fit models and create images:
 # ------------------------------------------
 
+max_iters = 6000L
 vec_learning_rates = c(0.001, 0.01, 0.05, 0.1)
+vec_iters_at_once = c(1, 10, 100, 1000, 2000)
+true_beta = data$params[-1]
 
-fed_logreg = getFittingTrace(X = X, y = y, index_list = index_list, max_iters = 2000L, 
-  vec_iters_at_once = c(1, 10, 100, 1000, 2000), vec_learning_rates = vec_learning_rates, 
-  true_beta = data$params[-1])
+fed_logreg = getFittingTrace(X = X, y = y, index_list = index_list, max_iters = max_iters, 
+  vec_iters_at_once = vec_iters_at_once, vec_learning_rates = vec_learning_rates, 
+  true_beta = true_beta)
 
-fed_logreg[[2]]
+plot(fed_logreg)
