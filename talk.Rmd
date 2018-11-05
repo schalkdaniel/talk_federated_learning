@@ -22,8 +22,6 @@ Classical parallelization, advantages:
 -   Idea behind Spark, Hadoop, ...
 -   Assumption that we already have a database which we want to distribute, hence data of the splits should follow the same distribution 
 
-
-
 # Federated/Decentralized Learning
 
 ##
