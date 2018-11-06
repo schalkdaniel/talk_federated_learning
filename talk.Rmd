@@ -24,20 +24,6 @@ Classical parallelization, advantages:
 
 # Federated/Decentralized Learning
 
-##
-
-\addtocounter{framenumber}{-1}
-
-Federated Learning as learning on decentralized data with the following properties:
-
--   **Non-IID** The training data on a given client is typically based on the usage of the mobile device by a particular user, and hence any particular user’s local dataset will not be representative of the population distribution.
-
--   **Unbalanced** Similarly, some users will make much heavier use of the service or app than others, leading to varying amounts of local training data.
-
--   **Massively distributed** We expect the number of clients participating in an optimization to be much larger than the average number of examples per client.
-
--   **Limited communication** Mobile devices are frequently offline or on slow or expensive connections.
-
 ## What is it About?
 
 \includegraphics[width=\textwidth,page=1]{images/federated_learning.pdf}
@@ -73,29 +59,156 @@ Federated Learning as learning on decentralized data with the following properti
 -   Privacy concerning method
 -   ... 
 
-# Federated Learning of Gradient-Based Methods
+## Common Problems in Decentralized Learning 
 
-## Google Paper
+Federated Learning as learning on decentralized data with the following properties:
 
--   Problems
+-   **Non-IID** The training data on a given client is typically based on the usage of the mobile device by a particular user, and hence any particular user’s local dataset will not be representative of the population distribution.
 
-## Federated Averaging
+-   **Unbalanced** Similarly, some users will make much heavier use of the service or app than others, leading to varying amounts of local training data.
 
--   Mention problems and how we can tackle them (more steps in one iteration ...)
+-   **Massively distributed** We expect the number of clients participating in an optimization to be much larger than the average number of examples per client.
 
-# Challenges
+-   **Limited communication** Mobile devices are frequently offline or on slow or expensive connections.
+
+
+# Federated Learning
+
+## Terminology
+
+|                      |                                     |
+|:-------------------- |:-----------------------------------:|
+| **Feature Vector**   | $x \in \mathcal{X}$                 |
+| **Target Variable**  | $y \in \mathcal{Y}$                 |
+| **Parameter Vector** | $\theta \in \Theta$                 |
+| **Prediction**       | $\hat{y} = f(x, \hat{\theta})$      |
+| **Loss Function**    | $L\left(y, \hat{y}\right)$          |
+| **Dataset**          | $\mathcal{D} = (x^{(i)}, y^{(i)}),\ \forall i \in \{1, \dots n\}$ |
+| **Empirical Risk**   | $\mathcal{R}_\mathsf{emp}(\mathcal{D}, \theta) = \frac{1}{n}\sum\limits_{(x,y) \in \mathcal{D}} L\left(y, f(x,\theta)\right)$ |
+
+## Gradient Descent
+
+$$\hat{\theta}_{t+1} = \hat{\theta}_t - \eta\nabla_\theta \mathcal{R}_\mathsf{emp}(\hat{\theta}_t)$$
+-   With Gradient: $$\frac{\delta}{\delta\theta} L(y,f(x,\theta)) = \nabla_\theta \mathcal{R}_\mathsf{emp}(\theta)$$
+-   And learning rate $\eta > 0$
+
+## Federated Averaging 1
+
+-   We now got $K$ different clients
+-   Each client holds a non-distributable dataset $\mathcal{D}_k$, $k \in \{1, \dots, K\}$ with $n_k$ observations
+-   Each dataset yields an empirical risk $\mathcal{R}_\mathsf{emp}(\mathcal{D}_k, \theta)$
+
+$\Rightarrow$ How to find a good model (represented by $\hat{\theta}$) trained on all datasets?
+
+## Federated Averaging 2
+
+\scriptsize
+
+\begin{Shaded}
+\begin{algorithm}[H]
+  \SetAlgoLined
+  \KwData{$\mathcal{D}_1, \dots, \mathcal{D}_K$}
+  \KwResult{Parameter vector $\hat{\theta}$}
+  \textbf{Initialization:} $\hat{\theta}_0$ e.g. randomly and set $t = 1$\;
+  \While{Stop criteria is not reached}{
+    Send $\hat{\theta}_{t-1}$ to all $K$ clients\;
+    \For{$k = 1$ \KwTo $K$}{
+      Calculate and report $\nabla_\theta \mathcal{R}_\mathsf{emp}(\mathcal{D}_k, \hat{\theta}_{t-1})$ to host\;
+    }
+    \tcc{Host conduct Federated Averaging step:}
+    $\hat{\theta}_{t} = \hat{\theta}_{t-1} - \eta \sum\limits_{k = 1}^K \frac{n_k}{n} \nabla_\theta \mathcal{R}_\mathsf{emp}(\mathcal{D}_k, \hat{\theta}_{t-1})$\;
+    Check if stop criteria is reached, e.g. $\|\hat{\theta}_t - \hat{\theta}_{t-1}\|_2 < \varepsilon$\;
+    Increment $t \leftarrow t + 1$ \;
+  }
+\end{algorithm}
+\end{Shaded}
+
+\normalsize
+
+This algorithm requires communication between host and clients after each iteration. $\rightarrow$ \alert{Very expensive!}
+
+## Federated Averaging 3
+
+In order to make one huge update on the host side we can conduct the update on the client side and average the updates:
+$$
+\gamma_k = \hat{\theta}_{t-1} - \eta \mathcal{R}_\mathsf{emp}(\mathcal{D}_k, \hat{\theta}_{t-1})
+$$
+$$
+\Rightarrow\ \hat{\theta}_t = \sum\limits_{k = 1}^K\frac{n_k}{n}\gamma_k = \hat{\theta}_{t-1} - \eta \sum\limits_{k = 1}^K \frac{n_k}{n} \nabla_\theta \mathcal{R}_\mathsf{emp}(\mathcal{D}_k, \hat{\theta}_{t-1})
+$$
+Additionally, we can think of different methods to average the reported updates:
+$$
+\hat{\theta}_t = \mathsf{avg}(\gamma_1, \dots, \gamma_K, \alpha) = \sum\limits_{k = 1}^K \frac{n_k}{n} \gamma_{k}
+$$
+
+## Federated Averaging 4
+
+\scriptsize
+
+\begin{Shaded}
+\begin{algorithm}[H]
+  \SetAlgoLined
+  {\normalsize\textbf{Host side:} Distribute and collect data}\;
+  \KwData{$\mathcal{D}_1, \dots, \mathcal{D}_K$}
+  \KwResult{Parameter vector $\hat{\theta}$}
+  \textbf{Initialization:} $\hat{\theta}_0$ e.g. randomly and set $t = 1$\;
+  \While{Stop criteria is not reached}{
+    Send $\hat{\theta}_{t-1}$ to all $K$ clients\;
+    \For{$k = 1$ \KwTo $K$}{
+      $\gamma_k = \mathsf{clientUpdate}(k, \hat{\theta}_{t-1})$\;
+      Report $\gamma_{k}$ to host\;
+    }
+    \tcc{Host conduct Federated Averaging step:}
+    $\hat{\theta}_{t} = \mathsf{avg}(\gamma_1, \dots, \gamma_K, \alpha)$\;
+    Check if stop criteria is reached, e.g. $\|\hat{\theta}_t - \hat{\theta}_{t-1}\|_2 < \varepsilon$\;
+    Increment $t \leftarrow t + 1$ \;
+  }
+\caption{Federated Averaging Algorithm}\label{fedavg}
+\end{algorithm}
+\end{Shaded}
+
+\normalsize
+
+## Federated Averaging 5
+
+With algorithm \ref{fedavg} we can also think about reducing communication costs. Therefore, we conduct $E$ updates in $\mathsf{clientUpdate}$:
+
+\scriptsize
+\begin{Shaded}
+\begin{algorithm}[H]
+  \SetAlgoLined
+  {\normalsize\textbf{Client side:} Conduct update on local dataset}\;
+  \KwData{$\mathcal{D}_k$ and $\hat{\theta}_{t-1}$}
+  \KwResult{$k$-th client update $\gamma_k$}
+  \textbf{Initialization:} $\gamma_{k,0} = \hat{\theta}_{t-1}$\;
+  \For{$i = 1$ \KwTo $E$}{
+    $\gamma_{k,i} = \gamma_{k,i-1} - \eta\nabla_\theta \mathcal{R}_\mathsf{emp}(\mathcal{D}_k, \gamma_{k,i-1})$\;
+  }
+  Report $\gamma_k = \gamma_{k,E}$ to host\;  
+\caption{Communication reduction in $\mathsf{clientUpdate}$}
+\end{algorithm}
+\end{Shaded}
+\normalsize
+
+<!-- -   Mention problems and how we can tackle them (more steps in one iteration ...) -->
+
+<!-- # Challenges
 
 ## Communication Costs vs. Training Costs
 
-## Evaluation of Federated Learning Systems
+## Evaluation of Federated Learning Systems -->
 
 # Example with Logistic Regression
 
 ## Setup
 
-- **Loss Function/Negative Log-Likelihood** \[L\left(y, f(x, \theta)\right) = - y \log\left(f(x, \theta)\right) - (1 - y) \log\left(1 - f(x, \theta)\right) \]
-- **Response Function** \[f(x) = \left(1 + \exp\left(-x^T\theta\right)\right)^{-1}\]
-- **Score Function** \[\frac{\delta}{\delta\theta}L(y,f\left(x,\theta)\right) = x \left(y - f(x,\theta)\right)\]
+- **Loss Function/Negative Log-Likelihood** $$L\left(y, f(x, \theta)\right) = y \log\left(f(x, \theta)\right) + (1 - y) \log\left(1 - f(x, \theta)\right)$$
+- **Response Function** $$f(x) = \left(1 + \exp\left(-x^T\theta\right)\right)^{-1}$$
+- **Score Function** $$\frac{\delta}{\delta\theta}L(y,f\left(x,\theta)\right) = x \left(y + f(x,\theta)\right)$$
+
+## 
+
+\includegraphics[width=\textwidth]{images/fed_logreg_iid.pdf}
 
 # Boosting and Federated Learning
 
