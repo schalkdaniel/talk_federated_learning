@@ -19,12 +19,10 @@ extractGlobalModelBayes = function (list_coef, weights)
     mean.default(x = x)
   }))
   sigma = cov(do.call(rbind, list_coef))
-  # variances = mean(unlist(apply(X = do.call(rbind, list_coef), MARGIN = 2, function (x) {
-  #   var(x = x)
-  # })))
   data_dist = unlist(lapply(list_coef, function (x) {
     mvtnorm::dmvnorm(x = x, mean = centroid, sigma = sigma)
   }))
+  data_dist = data_dist / max(data_dist)
   return (
     unlist(apply(X = do.call(rbind, list_coef), MARGIN = 2, function (x) {
       weighted.mean(x = x, w = weights * data_dist)

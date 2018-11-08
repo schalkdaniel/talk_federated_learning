@@ -30,7 +30,7 @@ fed_logreg_iid = getFittingTrace(X = X, y = y, index_list = index_list, max_iter
   true_beta = true_beta, eps_for_break = 1e-7)
 
 plot(fed_logreg_iid, plot_title = "Federated Logistic Regression with Simulated IID Situation", show_averaging = TRUE)
-ggsave(filename = "images/fed_logreg_iid.pdf", width = 50, height = 30, units = "cm")
+# ggsave(filename = "images/fed_logreg_iid.pdf", width = 50, height = 30, units = "cm")
 
 
 # IID Unbalanced Setting
@@ -55,7 +55,7 @@ fed_logreg_iid_ub = getFittingTrace(X = X, y = y, index_list = index_list, max_i
   true_beta = true_beta, eps_for_break = 1e-7)
 
 plot(fed_logreg_iid_ub, plot_title = "Federated Logistic Regression with Simulated IID Situation", show_averaging = TRUE)
-ggsave(filename = "images/fed_logreg_iid_ub.pdf", width = 50, height = 30, units = "cm")
+# ggsave(filename = "images/fed_logreg_iid_ub.pdf", width = 50, height = 30, units = "cm")
 
 # Non-IID Setting 1
 # ------------------------------------------
@@ -86,4 +86,4 @@ fed_logreg_set1 = getFittingTrace(X = X, y = y, index_list = index_list, max_ite
   true_beta = true_beta, eps_for_break = 1e-7, extract_global_model = extractGlobalModelBayes)
 
 plot(fed_logreg_set1, plot_title = "Federated Logistic Regression with Destroyed Feature of Dataset 3", show_averaging = TRUE)
-ggsave("images/fed_logreg_set1.pdf", width = 50, height = 30, units = "cm")
+# ggsave("images/fed_logreg_set1.pdf", width = 50, height = 30, units = "cm")

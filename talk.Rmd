@@ -143,12 +143,13 @@ $$
 
 ## Federated Averaging 4
 
+\textbf{Host side:} Distribute and collect data
+
 \scriptsize
 
 \begin{Shaded}
 \begin{algorithm}[H]
   \SetAlgoLined
-  {\normalsize\textbf{Host side:} Distribute and collect data}\;
   \KwData{$\mathcal{D}_1, \dots, \mathcal{D}_K$}
   \KwResult{Parameter vector $\hat{\theta}$}
   \textbf{Initialization:} $\hat{\theta}_0$ e.g. randomly and set $t = 1$\;
@@ -177,7 +178,6 @@ With algorithm \ref{fedavg} we can also think about reducing communication costs
 \begin{Shaded}
 \begin{algorithm}[H]
   \SetAlgoLined
-  {\normalsize\textbf{Client side:} Conduct update on local dataset}\;
   \KwData{$\mathcal{D}_k$ and $\hat{\theta}_{t-1}$}
   \KwResult{$k$-th client update $\gamma_k$}
   \textbf{Initialization:} $\gamma_{k,0} = \hat{\theta}_{t-1}$\;
