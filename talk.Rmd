@@ -11,9 +11,38 @@ output:
     template: "style/custom_pandoc.tex"
 ---
 
-# Terminology
+
+
+# The Problem
+
+## Use Case
+
+**About the data:**
+
+-   5 Hospitals, each holds data about patients and a disease
+-   For data protection reasons, these data may not be combined
+
+**About the analysis:**
+
+-   Now a statistician wants to analyze the data and predict whether a patient is diseased or not
+-   **But:** Most statistical or machine learning approaches requires **one** database for modeling
+
+\begin{itemize}
+  \item[$\Rightarrow$] We want to learn one model on decentralized datasets distributed over multiple sources.
+\end{itemize}
+
+# Federated/Decentralized Learning
 
 ## Distributed Learning
+
+Different approaches of parallelization in centralized learning:
+
+-   **Algorithmic:** The learning algorithm naturally supports parallelization, e.g. Random Forest
+-   **Data:** The data are distributed over multiple machines (idea behind Hadoop and Spark), e.g. map reduce
+
+
+
+
 
 Classical parallelization, advantages:
 
@@ -21,8 +50,6 @@ Classical parallelization, advantages:
 -   Train model on much more data
 -   Idea behind Spark, Hadoop, ...
 -   Assumption that we already have a database which we want to distribute, hence data of the splits should follow the same distribution 
-
-# Federated/Decentralized Learning
 
 ## What is it About?
 
@@ -53,54 +80,60 @@ Classical parallelization, advantages:
 \includegraphics[width=\textwidth,page=6]{images/federated_learning.pdf}
 \addtocounter{framenumber}{-1}
 
-## Federated Learning/Decentralized Learning
+<!-- ## Federated Learning/Decentralized Learning
 
 -   Model comes to the data, not data to the model
 -   Privacy concerning method
--   ... 
+-   ...  -->
 
 ## Common Problems in Decentralized Learning 
 
-Federated Learning as learning on decentralized data with the following properties:
+Federated Learning \cite{mcmahan2016communication} as learning on decentralized data with the following properties:
 
--   **Non-IID** The training data on a given client is typically based on the usage of the mobile device by a particular user, and hence any particular user’s local dataset will not be representative of the population distribution.
+-   **Non-IID:** The training data on a given client is typically based on external influences, and hence any clients local dataset will not be representative of the population distribution.
 
--   **Unbalanced** Similarly, some users will make much heavier use of the service or app than others, leading to varying amounts of local training data.
+-   **Unbalanced:** Similarly, varying amounts of local training data on each client.
 
--   **Massively distributed** We expect the number of clients participating in an optimization to be much larger than the average number of examples per client.
+-   **Distributed:** We expect the number of clients participating in an optimization larger than one.
 
--   **Limited communication** Mobile devices are frequently offline or on slow or expensive connections.
+-   **Limited communication:** Clients are frequently offline or on slow or expensive connections $\Rightarrow$ New resource communication.
+
 
 
 # Federated Learning
 
 ## Terminology
 
-|                      |                                     |
-|:-------------------- |:-----------------------------------:|
-| **Feature Vector**   | $x \in \mathcal{X}$                 |
-| **Target Variable**  | $y \in \mathcal{Y}$                 |
-| **Parameter Vector** | $\theta \in \Theta$                 |
-| **Prediction**       | $\hat{y} = f(x, \hat{\theta})$      |
-| **Loss Function**    | $L\left(y, \hat{y}\right)$          |
+|                      |                                           |
+|:-------------------- |:-----------------------------------------:|
+| **Feature Vector**   | $x \in \mathcal{X}$                       |
+| **Target Variable**  | $y \in \mathcal{Y}$                       |
+| **Parameter Vector** | $\theta \in \Theta$                       |
+| **Model**            | $f : \mathcal{X} \rightarrow \mathcal{Y}$ |
+| **Prediction**       | $\hat{y} = f(x, \hat{\theta})$            |
+| **Loss Function**    | $L\left(y, \hat{y}\right)$                |
 | **Dataset**          | $\mathcal{D} = (x^{(i)}, y^{(i)}),\ \forall i \in \{1, \dots n\}$ |
-| **Empirical Risk**   | $\mathcal{R}_\mathsf{emp}(\mathcal{D}, \theta) = \frac{1}{n}\sum\limits_{(x,y) \in \mathcal{D}} L\left(y, f(x,\theta)\right)$ |
+| **Empirical Risk**   | $\mathcal{R}_\mathsf{emp}(\mathcal{D}, \hat{\theta}) = \frac{1}{n}\sum\limits_{(x,y) \in \mathcal{D}} L\left(y, f(x,\hat{\theta})\right)$ |
 
 ## Gradient Descent
 
 $$\hat{\theta}_{t+1} = \hat{\theta}_t - \eta\nabla_\theta \mathcal{R}_\mathsf{emp}(\hat{\theta}_t)$$
--   With Gradient: $$\frac{\delta}{\delta\theta} L(y,f(x,\theta)) = \nabla_\theta \mathcal{R}_\mathsf{emp}(\theta)$$
--   And learning rate $\eta > 0$
 
-## Federated Averaging 1
+-   With gradient: $$\frac{\delta}{\delta\theta} L(y,f(x,\theta)) = \nabla_\theta \mathcal{R}_\mathsf{emp}(\theta)$$
+-   Learning rate $\eta > 0$
+-   Initial parameter vector $\hat{\theta}_0$
+
+## Federated Averaging - 1
 
 -   We now got $K$ different clients
 -   Each client holds a non-distributable dataset $\mathcal{D}_k$, $k \in \{1, \dots, K\}$ with $n_k$ observations
 -   Each dataset yields an empirical risk $\mathcal{R}_\mathsf{emp}(\mathcal{D}_k, \theta)$
 
-$\Rightarrow$ How to find a good model (represented by $\hat{\theta}$) trained on all datasets?
+\begin{itemize}
+  \item[$\Rightarrow$] How to find a good model (represented by $\hat{\theta}$) trained on all datasets?
+\end{itemize}
 
-## Federated Averaging 2
+## Federated Averaging - 2
 
 \scriptsize
 
@@ -127,7 +160,7 @@ $\Rightarrow$ How to find a good model (represented by $\hat{\theta}$) trained o
 
 This algorithm requires communication between host and clients after each iteration. $\rightarrow$ \alert{Very expensive!}
 
-## Federated Averaging 3
+## Federated Averaging - 3
 
 In order to make one huge update on the host side we can conduct the update on the client side and average the updates:
 $$
@@ -141,7 +174,7 @@ $$
 \hat{\theta}_t = \mathsf{avg}(\gamma_1, \dots, \gamma_K, \alpha) = \sum\limits_{k = 1}^K \frac{n_k}{n} \gamma_{k}
 $$
 
-## Federated Averaging 4
+## Federated Averaging - 4
 
 \textbf{Host side:} Distribute and collect data
 
@@ -170,7 +203,7 @@ $$
 
 \normalsize
 
-## Federated Averaging 5
+## Federated Averaging - 5
 
 With algorithm \ref{fedavg} we can also think about reducing communication costs. Therefore, we conduct $E$ updates in $\mathsf{clientUpdate}$:
 
@@ -200,16 +233,72 @@ With algorithm \ref{fedavg} we can also think about reducing communication costs
 
 # Example with Logistic Regression
 
-## Setup
+## Logistic Regression
 
-- **Loss Function/Negative Log-Likelihood** $$L\left(y, f(x, \theta)\right) = y \log\left(f(x, \theta)\right) + (1 - y) \log\left(1 - f(x, \theta)\right)$$
-- **Response Function** $$f(x) = \left(1 + \exp\left(-x^T\theta\right)\right)^{-1}$$
-- **Score Function** $$\frac{\delta}{\delta\theta}L(y,f\left(x,\theta)\right) = x \left(y + f(x,\theta)\right)$$
+-   **Loss Function/Negative Log-Likelihood** $$L\left(y, f(x, \theta)\right) = y \log\left(f(x, \theta)\right) + (1 - y) \log\left(1 - f(x, \theta)\right)$$
+-   **Response Function** $$f(x) = \left(1 + \exp\left(-x^T\theta\right)\right)^{-1}$$
+-   **Score Function** $$\frac{\delta}{\delta\theta}L(y,f\left(x,\theta)\right) = x \left(y + f(x,\theta)\right)$$
 
-## 
+## Simulation Setup - 1
+
+-   Correlations are simulated from beta distribution $r_{ij} = B(1,2)$ for $i \neq j$, $r_{ii} = 1$
+-   Dataset is simulated using a multivariate normal distribution $x^{(i)} \sim N_p(\mu, R)$
+-   Binary labels are generated by sampling from Bernoulli distribution $B\left(1,f(x^{(i)})\right)$
+
+## Simulation Setup - 2
+
+-   The dataset is split into $K$ "local datasets" under consideration of different data situations:
+    -   **Setup 1:** Local datasets are IID
+    -   **Setup 2:** One variable of one of the IID datasets gets a bias (e.g. damaged sensor)
+    -   **Setup 3:** Unbalanced local datasets
+    -   **Setup 4:** Unbalanced and non-IID, but with biases that have a mean of zero
+
+-   We conduct Federated Averaging until the norm of the update $\|\hat{\theta}_t - \hat{\theta}_{t-1}\|_2$ is smaller than $10^{-7}$ for varying learning rates $\eta$ and number of updates at once $E$:
+    -   $\eta\in\{0.001, 0.01, 0.05, 0.1\}$
+    -   $E\in\{1, 10, 100, 1000, 2000\}$
+
+For visualization purposes we simulate the data without intercept and $p = 2$.
+
+## Visualization Setup 1
 
 \includegraphics[width=\textwidth]{images/fed_logreg_iid.pdf}
 
+## Visualization Setup 2
+
+\includegraphics[width=\textwidth]{images/fed_logreg_set1.pdf}
+
+## Visualization Setup 3
+
+\includegraphics[width=\textwidth]{images/fed_logreg_iid_ub.pdf}
+
+## Visualization Setup 4
+
+\includegraphics[width=\textwidth]{images/fed_logreg_ub_non_iid.pdf}
+
+
 # Boosting and Federated Learning
 
+## 
+
+# Further Ideas
+
+## Further Ideas
+
+-   Experiments with different averaging approaches for $\mathsf{avg}(\gamma_1, \dots, \gamma_K, \alpha)$:
+    -   Use of other optimizer, such as momentum or adagrad
+    -   Reweighting of the updates by applying Bayes theorem
+    -   Train $\mathsf{avg}$ as surrogate model during the fitting process 
+
+
+
+# References
+
 ##
+
+\thispagestyle{empty}
+\begingroup
+  \renewcommand{\section}[2]{}
+  \scriptsize
+  \bibliographystyle{apalike}
+  \bibliography{references}
+\endgroup

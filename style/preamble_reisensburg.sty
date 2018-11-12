@@ -221,4 +221,25 @@
     shorten <=2pt,
     shorten >=2pt,}
 }
+
+
+% \usepackage[square,sort,comma,numbers]{natbib}
+
 \usepackage{subfig}
+
+\makeatletter
+\let\latexl@section\l@section
+\def\l@section#1#2{\begingroup\let\numberline\@gobble\latexl@section{#1}{#2}\endgroup}
+\makeatother
+
+\let\oldcite\cite
+\renewcommand{\cite}[1]{\beamergotobutton{\oldcite{#1}}}
+
+% % \setbeamercolor{button}{bg=metropolis_theme_color,fg=white}
+\setbeamercolor{button}{bg=myorange,fg=white}
+
+\setbeamerfont{bibliography item}{size=\footnotesize}
+\setbeamerfont{bibliography entry author}{size=\footnotesize}
+\setbeamerfont{bibliography entry title}{size=\footnotesize}
+\setbeamerfont{bibliography entry location}{size=\footnotesize}
+\setbeamerfont{bibliography entry note}{size=\footnotesize}
