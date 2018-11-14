@@ -37,19 +37,12 @@ output:
 
 Different approaches of parallelization in centralized learning:
 
--   **Algorithmic:** The learning algorithm naturally supports parallelization, e.g. Random Forest
--   **Data:** The data are distributed over multiple machines (idea behind Hadoop and Spark), e.g. map reduce
+-   **Algorithmic:** Learning algorithm naturally supports parallelization, e.g. Random Forest
+-   **Data:** Data are distributed over multiple machines (idea behind Hadoop and Spark), e.g. map reduce
 
+Decentralized learning is a combination of both:
 
-
-
-
-Classical parallelization, advantages:
-
--   Speed up fitting process
--   Train model on much more data
--   Idea behind Spark, Hadoop, ...
--   Assumption that we already have a database which we want to distribute, hence data of the splits should follow the same distribution 
+-   Data are distributed over multiple machines and the algorithm must be able to learn on the local datasets
 
 ## What is it About?
 
@@ -79,12 +72,6 @@ Classical parallelization, advantages:
 
 \includegraphics[width=\textwidth,page=6]{images/federated_learning.pdf}
 \addtocounter{framenumber}{-1}
-
-<!-- ## Federated Learning/Decentralized Learning
-
--   Model comes to the data, not data to the model
--   Privacy concerning method
--   ...  -->
 
 ## Common Problems in Decentralized Learning 
 
@@ -167,7 +154,7 @@ $$
 \gamma_k = \hat{\theta}_{t-1} - \eta \mathcal{R}_\mathsf{emp}(\mathcal{D}_k, \hat{\theta}_{t-1})
 $$
 $$
-\Rightarrow\ \hat{\theta}_t = \sum\limits_{k = 1}^K\frac{n_k}{n}\gamma_k = \hat{\theta}_{t-1} - \eta \sum\limits_{k = 1}^K \frac{n_k}{n} \nabla_\theta \mathcal{R}_\mathsf{emp}(\mathcal{D}_k, \hat{\theta}_{t-1})
+\Rightarrow\ \hat{\theta}_t = \hat{\theta}_{t-1} - \eta \sum\limits_{k = 1}^K \frac{n_k}{n} \nabla_\theta \mathcal{R}_\mathsf{emp}(\mathcal{D}_k, \hat{\theta}_{t-1}) = \sum\limits_{k = 1}^K\frac{n_k}{n}\gamma_k
 $$
 Additionally, we can think of different methods to average the reported updates:
 $$
@@ -235,9 +222,9 @@ With algorithm \ref{fedavg} we can also think about reducing communication costs
 
 ## Logistic Regression
 
--   **Loss Function/Negative Log-Likelihood** $$L\left(y, f(x, \theta)\right) = y \log\left(f(x, \theta)\right) + (1 - y) \log\left(1 - f(x, \theta)\right)$$
+-   **Loss Function/Negative Log-Likelihood** $$L\left(y, f(x, \theta)\right) = -y \log\left(f(x, \theta)\right) - (1 - y) \log\left(1 - f(x, \theta)\right)$$
 -   **Response Function** $$f(x) = \left(1 + \exp\left(-x^T\theta\right)\right)^{-1}$$
--   **Score Function** $$\frac{\delta}{\delta\theta}L(y,f\left(x,\theta)\right) = x \left(y + f(x,\theta)\right)$$
+-   **Score Function** $$\frac{\delta}{\delta\theta}L(y,f\left(x,\theta)\right) = x \left(y - f(x,\theta)\right)$$
 
 ## Simulation Setup - 1
 
@@ -278,7 +265,11 @@ For visualization purposes we simulate the data without intercept and $p = 2$.
 
 # Boosting and Federated Learning
 
-## 
+## Centralized Approaches
+
+- DistBoost http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.84.8866&rep=rep1&type=pdf
+- DiVote http://www.jmlr.org/papers/volume5/chawla04a/chawla04a.pdf (parallel IVote http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.308.8562&rep=rep1&type=pdf) 
+- PreWeak https://stanford.edu/~rezab/nips2014workshop/submits/distboost.pdf
 
 # Further Ideas
 
@@ -289,7 +280,7 @@ For visualization purposes we simulate the data without intercept and $p = 2$.
     -   Reweighting of the updates by applying Bayes theorem
     -   Train $\mathsf{avg}$ as surrogate model during the fitting process 
 
-
+-   Inherent evaluation on local datasets (useful for early stopping)
 
 # References
 
