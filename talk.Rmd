@@ -68,7 +68,7 @@ Decentralized learning is a combination of both:
 \includegraphics[width=\textwidth,page=6]{images/federated_learning.pdf}
 \addtocounter{framenumber}{-1}
 
-## Common Problems in Decentralized Learning 
+## Common Problems in Decentralized/Federated Learning 
 
 Federated Learning \cite{mcmahan2016communication} as learning on decentralized data with the following properties:
 
@@ -80,9 +80,6 @@ Federated Learning \cite{mcmahan2016communication} as learning on decentralized 
 
 -   **Limited communication:** Clients are frequently offline or on slow or expensive connections $\Rightarrow$ New resource communication.
 
-
-
-# Federated Learning
 
 ## Terminology
 
@@ -144,14 +141,14 @@ This algorithm requires communication between host and clients after each iterat
 
 ## Federated Averaging - 3
 
-In order to make one huge update on the host side we can conduct the update on the client side and average the updates:
+Instead of making one huge update on the host side, we conduct the update on the client side and average the updates:
 $$
 \gamma_k = \hat{\theta}_{t-1} - \eta \mathcal{R}_\mathsf{emp}(\mathcal{D}_k, \hat{\theta}_{t-1})
 $$
 $$
 \Rightarrow\ \hat{\theta}_t = \hat{\theta}_{t-1} - \eta \sum\limits_{k = 1}^K \frac{n_k}{n} \nabla_\theta \mathcal{R}_\mathsf{emp}(\mathcal{D}_k, \hat{\theta}_{t-1}) = \sum\limits_{k = 1}^K\frac{n_k}{n}\gamma_k
 $$
-Additionally, we can think of different methods to average the reported updates:
+Additionally, it is possible to use different methods to average the reported updates:
 $$
 \hat{\theta}_t = \mathsf{avg}(\gamma_1, \dots, \gamma_K, \alpha) = \sum\limits_{k = 1}^K \frac{n_k}{n} \gamma_{k}
 $$
