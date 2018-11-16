@@ -16,13 +16,13 @@ output:
 
 **About the data:**
 
--   5 Hospitals, each holds data about patients and a disease
+-   4 Hospitals (we call them clients), each one holds data about patients and a disease
 -   For data protection reasons, these data may not be combined
 
 **About the analysis:**
 
--   Now a statistician wants to analyze the data and predict whether a patient is diseased or not
--   **But:** Most statistical or machine learning approaches requires **one** database for modeling
+-   Now a statistician wants to analyze the data and predict whether a patient is diseased or not on a global machine (the host)
+-   **But:** Most statistical or machine learning approaches require **one** database for modeling
 
 \begin{itemize}
   \item[$\Rightarrow$] We want to learn one model on decentralized datasets distributed over multiple sources.
@@ -32,7 +32,7 @@ output:
 
 Different approaches of parallelization in centralized learning:
 
--   **Algorithmic:** Learning algorithm naturally supports parallelization, e.g. Random Forest
+-   **Algorithmic:** The learning algorithm naturally supports parallelization, e.g. Random Forest
 -   **Data:** Data are distributed over multiple machines (idea behind Hadoop and Spark), e.g. map reduce
 
 Decentralized learning is a combination of both:
@@ -76,9 +76,10 @@ Federated Learning \cite{mcmahan2016communication} as learning on decentralized 
 
 -   **Unbalanced:** Similarly, varying amounts of local training data on each client.
 
--   **Distributed:** We expect the number of clients participating in an optimization larger than one.
+-   **Distributed:** We expect the number of clients participating in an optimization round to be larger than one.
 
--   **Limited communication:** Clients are frequently offline or on slow or expensive connections $\Rightarrow$ New resource communication.
+-   **Limited communication:** Clients are frequently offline or on slow and/or expensive connections. \
+    $\Rightarrow$ New resource **communication**
 
 
 ## Terminology
@@ -106,10 +107,10 @@ $$\hat{\theta}_{t+1} = \hat{\theta}_t - \eta\nabla_\theta \mathcal{R}_\mathsf{em
 
 -   We now got $K$ different clients
 -   Each client holds a non-distributable local dataset $\mathcal{D}_k$, $k \in \{1, \dots, K\}$ with $n_k$ observations
--   Each dataset yields an empirical risk $\mathcal{R}_\mathsf{emp}(\mathcal{D}_k, \theta)$
+-   Each dataset gives an empirical risk $\mathcal{R}_\mathsf{emp}(\mathcal{D}_k, \theta)$
 
 \begin{itemize}
-  \item[$\Rightarrow$] How to find a good model (represented by $\hat{\theta}$) trained on all local datasets?
+  \item[$\Rightarrow$] How to find a good model (represented by $\hat{\theta}$) optimizing the global empirical Risk but trained on all local datasets
 \end{itemize}
 
 ## Federated Averaging - 2
@@ -136,6 +137,8 @@ $$\hat{\theta}_{t+1} = \hat{\theta}_t - \eta\nabla_\theta \mathcal{R}_\mathsf{em
 \end{Shaded}
 
 \normalsize
+
+\pause
 
 This algorithm requires communication between host and clients after each iteration. $\rightarrow$ \alert{Very expensive!}
 
