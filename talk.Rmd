@@ -1,8 +1,7 @@
 ---
-title: Federated Learning
-subtitle: Idea, Applications, and 
+title: Introduction to Federated/Decentralized Learning for Gradient-Based Methods
 author: Daniel Schalk
-date: \today
+date: November 21, 2018
 output:
   beamer_presentation:
     toc: true
@@ -11,11 +10,9 @@ output:
     template: "style/custom_pandoc.tex"
 ---
 
+# Federated/Decentralized Learning
 
-
-# The Problem
-
-## Use Case
+## The Problem
 
 **About the data:**
 
@@ -30,8 +27,6 @@ output:
 \begin{itemize}
   \item[$\Rightarrow$] We want to learn one model on decentralized datasets distributed over multiple sources.
 \end{itemize}
-
-# Federated/Decentralized Learning
 
 ## Distributed Learning
 
@@ -113,11 +108,11 @@ $$\hat{\theta}_{t+1} = \hat{\theta}_t - \eta\nabla_\theta \mathcal{R}_\mathsf{em
 ## Federated Averaging - 1
 
 -   We now got $K$ different clients
--   Each client holds a non-distributable dataset $\mathcal{D}_k$, $k \in \{1, \dots, K\}$ with $n_k$ observations
+-   Each client holds a non-distributable local dataset $\mathcal{D}_k$, $k \in \{1, \dots, K\}$ with $n_k$ observations
 -   Each dataset yields an empirical risk $\mathcal{R}_\mathsf{emp}(\mathcal{D}_k, \theta)$
 
 \begin{itemize}
-  \item[$\Rightarrow$] How to find a good model (represented by $\hat{\theta}$) trained on all datasets?
+  \item[$\Rightarrow$] How to find a good model (represented by $\hat{\theta}$) trained on all local datasets?
 \end{itemize}
 
 ## Federated Averaging - 2
@@ -267,11 +262,46 @@ For visualization purposes we simulate the data without intercept and $p = 2$.
 
 ## Centralized Approaches
 
-- DistBoost http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.84.8866&rep=rep1&type=pdf
-- DiVote http://www.jmlr.org/papers/volume5/chawla04a/chawla04a.pdf (parallel IVote http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.308.8562&rep=rep1&type=pdf) 
-- PreWeak https://stanford.edu/~rezab/nips2014workshop/submits/distboost.pdf
+- Distributed Boosting \cite{lazarevic2001distributed}
+- DiVote \cite{chawla2004learning} (parallel IVote \cite{breiman1999pasting}) 
+- PreWeak \cite{cooper2017improved}
 
-# Further Ideas
+## Gradient Boosting
+
+In Gradient Boosting we update w.r.t. the model of the previous iteration:
+$$
+f^{[m]}(x^{(i)}) = f^{[m-1]}(x^{(i)}) - \beta^{[m]} r^{[m-1](i)}
+$$
+With
+$$
+r^{[m](i)} = - \left[\frac{\delta}{\delta f} L\left((y^{(i)},f(x^{(i)})\right)\right]_{f = f^{[m]}}
+$$
+
+-   The pseudo residuals $r^{[m](i)}$ contain weights how to update $f$ to suite the data
+-   How a specific update look like is defined by the type of the base-learner (trees, linear models, ...)
+
+## The Problem with Boosting and Federated Learning
+
+Applying Federated Learning on the Gradient Boosting algorithm: 
+
+-   Average of $K$ pseudo residuals from the clients. **But**:
+    -   The local datasets have different numbers of observations 
+    -   It makes no sense to average weights that contains the direction how to update one specific data point on the client side
+
+$\Rightarrow$ We have to do that separately for each type of base-learner:
+
+-   Using GLM base-learner (model-based boosting) should be possibly by applying Federated Learning to GLMs
+-   Using tree base-learner should be possible by applying Federated Learning to Trees
+-   ...
+
+
+# What Next
+
+## Further Topics
+
+-   What information is allowed to be shared?
+-   
+-   Increase privacy by combining Differential Privacy \cite{dwork2008differential} and Federated Learning
 
 ## Further Ideas
 
@@ -280,16 +310,16 @@ For visualization purposes we simulate the data without intercept and $p = 2$.
     -   Reweighting of the updates by applying Bayes theorem
     -   Train $\mathsf{avg}$ as surrogate model during the fitting process 
 
--   Inherent evaluation on local datasets (useful for early stopping)
+-   Inherent evaluation on local datasets during the fitting process
+
+-   Inherent assessment of the clients data quality  
+
+-   Find a general setup to apply Federated Learning to Gradient Boosting 
 
 # References
 
-##
+## {.allowframebreaks .plain}
 
-\thispagestyle{empty}
-\begingroup
-  \renewcommand{\section}[2]{}
-  \scriptsize
-  \bibliographystyle{apalike}
-  \bibliography{references}
-\endgroup
+\scriptsize
+\bibliographystyle{apalike}
+\bibliography{references}
