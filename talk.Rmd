@@ -4,7 +4,7 @@ author: Daniel Schalk
 date: November 21, 2018
 output:
   beamer_presentation:
-    toc: true
+    toc: false
     includes:
       in_header: "style/preamble_reisensburg.sty"
     template: "style/custom_pandoc.tex"
@@ -28,7 +28,9 @@ output:
   \item[$\Rightarrow$] We want to learn one model on decentralized datasets distributed over multiple sources.
 \end{itemize}
 
-## Distributed Learning
+\includegraphics[width=4cm,page=6]{images/federated_learning.pdf}
+
+<!-- ## Distributed Learning
 
 Different approaches of parallelization in centralized learning:
 
@@ -37,33 +39,33 @@ Different approaches of parallelization in centralized learning:
 
 Decentralized learning is a combination of both:
 
--   Data are distributed over multiple machines and the algorithm must be able to learn on the local datasets
+-   Data are distributed over multiple machines and the algorithm must be able to learn on the local datasets -->
 
-## What is it About?
+## Federated Learning
 
 \includegraphics[width=\textwidth,page=1]{images/federated_learning.pdf}
 
-## What is it About?
+## Federated Learning
 
 \includegraphics[width=\textwidth,page=2]{images/federated_learning.pdf}
 \addtocounter{framenumber}{-1}
 
-## What is it About?
+## Federated Learning
 
 \includegraphics[width=\textwidth,page=3]{images/federated_learning.pdf}
 \addtocounter{framenumber}{-1}
 
-## What is it About?
+## Federated Learning
 
 \includegraphics[width=\textwidth,page=4]{images/federated_learning.pdf}
 \addtocounter{framenumber}{-1}
 
-## What is it About?
+## Federated Learning
 
 \includegraphics[width=\textwidth,page=5]{images/federated_learning.pdf}
 \addtocounter{framenumber}{-1}
 
-## What is it About?
+## Federated Learning
 
 \includegraphics[width=\textwidth,page=6]{images/federated_learning.pdf}
 \addtocounter{framenumber}{-1}
@@ -72,7 +74,7 @@ Decentralized learning is a combination of both:
 
 Federated Learning \cite{mcmahan2016communication} as learning on decentralized data with the following properties:
 
--   **Non-IID:** The training data on a given client is typically based on external influences, and hence any clients local dataset will not be representative of the population distribution.
+-   **Non-IID:** The training data on a given client is typically based on external influences, and hence any client's local dataset will not be representative of the population distribution.
 
 -   **Unbalanced:** Similarly, varying amounts of local training data on each client.
 
@@ -94,22 +96,25 @@ Federated Learning \cite{mcmahan2016communication} as learning on decentralized 
 | **Loss Function**    | $L\left(y, \hat{y}\right)$                |
 | **Dataset**          | $\mathcal{D} = (x^{(i)}, y^{(i)}),\ \forall i \in \{1, \dots n\}$ |
 | **Empirical Risk**   | $\mathcal{R}_\mathsf{emp}(\mathcal{D}, \hat{\theta}) = \frac{1}{n}\sum\limits_{(x,y) \in \mathcal{D}} L\left(y, f(x,\hat{\theta})\right)$ |
+| **Risk**             | $\mathcal{R}(\mathcal{D}, \hat{\theta}) = \mathcal{R}_\mathsf{emp}(\mathcal{D}, \hat{\theta}) + \lambda C(\theta)$ | 
 
 ## Gradient Descent
 
 **Update Step:**
 
-$$\hat{\theta}_{t+1} = \hat{\theta}_t - \eta\nabla_\theta \mathcal{R}_\mathsf{emp}(\hat{\theta}_t)$$
+\begin{align*}
+\hat{\theta}^{[t+1]} &= \hat{\theta}^{[t]} - \eta\nabla_\theta \mathcal{R}(\mathcal{D}, \hat{\theta}^{[t]}) \\
+&= \hat{\theta}^{[t]} - \eta g(\hat{\theta}^{[t]})
+\end{align*}
 
--   With gradient: $$\frac{\delta}{\delta\theta} L(y,f(x,\theta)) = \nabla_\theta \mathcal{R}_\mathsf{emp}(\theta)$$
 -   Learning rate $\eta > 0$
--   Initial parameter vector $\hat{\theta}_0$
+-   Initial parameter vector $\hat{\theta}^{[0]}$
 
 ## Federated Averaging - 1
 
 -   We now got $K$ different clients
 -   Each client holds a non-distributable local dataset $\mathcal{D}_k$, $k \in \{1, \dots, K\}$ with $n_k$ observations
--   Each dataset gives an empirical risk $\mathcal{R}_\mathsf{emp}(\mathcal{D}_k, \theta)$
+-   Each dataset gives a risk $\mathcal{R}(\mathcal{D}_k, \theta)$ $\rightarrow$ $g_k(\theta) = \nabla_\theta\mathcal{R}(\mathcal{D}_k, \theta)$
 
 \begin{itemize}
   \item[$\Rightarrow$] How to find a good model (represented by $\hat{\theta}$) optimizing the global empirical Risk but trained on all local datasets
@@ -124,15 +129,15 @@ $$\hat{\theta}_{t+1} = \hat{\theta}_t - \eta\nabla_\theta \mathcal{R}_\mathsf{em
   \SetAlgoLined
   \KwData{$\mathcal{D}_1, \dots, \mathcal{D}_K$}
   \KwResult{Parameter vector $\hat{\theta}$}
-  \textbf{Initialization:} $\hat{\theta}_0$ e.g. randomly and set $t = 1$\;
+  \textbf{Initialization:} $\hat{\theta}^{[0]}$ e.g. randomly and set $t = 1$\;
   \While{Stop criteria is not reached}{
-    Send $\hat{\theta}_{t-1}$ to all $K$ clients\;
+    Send $\hat{\theta}^{[t-1]}$ to all $K$ clients\;
     \For{$k = 1$ \KwTo $K$}{
-      Calculate and report $\nabla_\theta \mathcal{R}_\mathsf{emp}(\mathcal{D}_k, \hat{\theta}_{t-1})$ to host\;
+      Calculate and report $g_k(\hat{\theta}^{[t-1]})$ to host\;
     }
     \tcc{Host conduct Federated Averaging step:}
-    $\hat{\theta}_{t} = \hat{\theta}_{t-1} - \eta \sum\limits_{k = 1}^K \frac{n_k}{n} \nabla_\theta \mathcal{R}_\mathsf{emp}(\mathcal{D}_k, \hat{\theta}_{t-1})$\;
-    Check if stop criteria is reached, e.g. $\|\hat{\theta}_t - \hat{\theta}_{t-1}\|_2 < \varepsilon$\;
+    $\hat{\theta}^{[t]} = \hat{\theta}^{[t-1]} - \eta \sum\limits_{k = 1}^K \frac{n_k}{n} g_k(\hat{\theta}^{[t-1]})$\;
+    Check if stop criteria is reached, e.g. $\|\hat{\theta}^{[t]} - \hat{\theta}^{[t-1]}\|_2 < \varepsilon$\;
     Increment $t \leftarrow t + 1$ \;
   }
 \end{algorithm}
@@ -146,16 +151,16 @@ This algorithm requires communication between host and clients after each iterat
 
 ## Federated Averaging - 3
 
-Instead of making one huge update on the host side, we conduct the update on the client side and average the updates:
+Instead of making one huge update on the host side, the update is conducted on the client side and average the updates:
 $$
-\gamma_k = \hat{\theta}_{t-1} - \eta \mathcal{R}_\mathsf{emp}(\mathcal{D}_k, \hat{\theta}_{t-1})
+\gamma_k = \hat{\theta}^{[t-1]} - \eta g_k(\hat{\theta}^{[t-1]})
 $$
 $$
-\Rightarrow\ \hat{\theta}_t = \hat{\theta}_{t-1} - \eta \sum\limits_{k = 1}^K \frac{n_k}{n} \nabla_\theta \mathcal{R}_\mathsf{emp}(\mathcal{D}_k, \hat{\theta}_{t-1}) = \sum\limits_{k = 1}^K\frac{n_k}{n}\gamma_k
+\Rightarrow\ \hat{\theta}^{[t]} = \hat{\theta}^{[t-1]} - \eta \sum\limits_{k = 1}^K \frac{n_k}{n} g_k(\hat{\theta}^{[t-1]}) = \sum\limits_{k = 1}^K\frac{n_k}{n}\gamma_k
 $$
 Additionally, it is possible to use different methods to average the reported updates:
 $$
-\hat{\theta}_t = \mathsf{avg}(\gamma_1, \dots, \gamma_K, \alpha) = \sum\limits_{k = 1}^K \frac{n_k}{n} \gamma_{k}
+\hat{\theta}^{[t]} = \mathsf{avg}(\gamma_1, \dots, \gamma_K, \alpha) = \sum\limits_{k = 1}^K \frac{n_k}{n} \gamma_{k}
 $$
 
 ## Federated Averaging - 4
@@ -169,16 +174,16 @@ $$
   \SetAlgoLined
   \KwData{$\mathcal{D}_1, \dots, \mathcal{D}_K$}
   \KwResult{Parameter vector $\hat{\theta}$}
-  \textbf{Initialization:} $\hat{\theta}_0$ e.g. randomly and set $t = 1$\;
+  \textbf{Initialization:} $\hat{\theta}^{[0]}$ e.g. randomly and set $t = 1$\;
   \While{Stop criteria is not reached}{
-    Send $\hat{\theta}_{t-1}$ to all $K$ clients\;
+    Send $\hat{\theta}^{[t-1]}$ to all $K$ clients\;
     \For{$k = 1$ \KwTo $K$}{
-      $\gamma_k = \mathsf{clientUpdate}(k, \hat{\theta}_{t-1})$\;
+      $\gamma_k = \mathsf{clientUpdate}(k, \hat{\theta}^{[t-1]})$\;
       Report $\gamma_{k}$ to host\;
     }
     \tcc{Host conduct Federated Averaging step:}
-    $\hat{\theta}_{t} = \mathsf{avg}(\gamma_1, \dots, \gamma_K, \alpha)$\;
-    Check if stop criteria is reached, e.g. $\|\hat{\theta}_t - \hat{\theta}_{t-1}\|_2 < \varepsilon$\;
+    $\hat{\theta}^{[t]} = \mathsf{avg}(\gamma_1, \dots, \gamma_K, \alpha)$\;
+    Check if stop criteria is reached, e.g. $\|\hat{\theta}^{[t]} - \hat{\theta}^{[t-1]}\|_2 < \varepsilon$\;
     Increment $t \leftarrow t + 1$ \;
   }
 \caption{Federated Averaging Algorithm}\label{fedavg}
@@ -195,11 +200,11 @@ With algorithm \ref{fedavg} we can also think about reducing communication costs
 \begin{Shaded}
 \begin{algorithm}[H]
   \SetAlgoLined
-  \KwData{$\mathcal{D}_k$ and $\hat{\theta}_{t-1}$}
+  \KwData{$\mathcal{D}_k$ and $\hat{\theta}^{[t-1]}$}
   \KwResult{$k$-th client update $\gamma_k$}
-  \textbf{Initialization:} $\gamma_{k,0} = \hat{\theta}_{t-1}$\;
+  \textbf{Initialization:} $\gamma_{k,0} = \hat{\theta}^{[t-1]}$\;
   \For{$i = 1$ \KwTo $E$}{
-    $\gamma_{k,i} = \gamma_{k,i-1} - \eta\nabla_\theta \mathcal{R}_\mathsf{emp}(\mathcal{D}_k, \gamma_{k,i-1})$\;
+    $\gamma_{k,i} = \gamma_{k,i-1} - \eta g_k(\gamma_{k,i-1})$\;
   }
   Report $\gamma_k = \gamma_{k,E}$ to host\;  
 \caption{Communication reduction in $\mathsf{clientUpdate}$}
@@ -229,7 +234,7 @@ Parts we need to apply Federated Learning:
 
 -   **Loss Function/Negative Log-Likelihood** $$L\left(y, f(x, \theta)\right) = -y \log\left(f(x, \theta)\right) - (1 - y) \log\left(1 - f(x, \theta)\right)$$
 -   **Response Function** $$f(x) = \left(1 + \exp\left(-x^T\theta\right)\right)^{-1}$$
--   **Derivative of the Loss Function** $$\frac{\delta}{\delta\theta}L(y,f\left(x,\theta)\right) = x \left(y - f(x,\theta)\right)$$
+-   **Derivative of the Loss Function** $$\frac{\partial}{\partial\theta}L(y,f\left(x,\theta)\right) = x \left(y - f(x,\theta)\right)$$
 
 ## Simulation Setup - 1
 
@@ -247,7 +252,7 @@ Parts we need to apply Federated Learning:
 
 ## Simulation Setup - 3
 
--   We conduct Federated Averaging until the norm of the update $\|\hat{\theta}_t - \hat{\theta}_{t-1}\|_2$ is smaller than $10^{-7}$ for varying learning rates $\eta$ and number of updates at once $E$:
+-   We conduct Federated Averaging until the norm of the update $\|\hat{\theta}^{[t]} - \hat{\theta}^{[t-1]}\|_2$ is smaller than $10^{-7}$ for varying learning rates $\eta$ and number of updates at once $E$:
     -   $\eta \in \{0.001, 0.01, 0.05, 0.1\}$
     -   $E \in \{1, 10, 100, 1000, 2000\}$
 
@@ -286,7 +291,7 @@ f^{[m]}(x^{(i)}) = f^{[m-1]}(x^{(i)}) - \beta^{[m]} r^{[m-1](i)}
 $$
 With
 $$
-r^{[m](i)} = - \left[\frac{\delta}{\delta f} L\left((y^{(i)},f(x^{(i)})\right)\right]_{f = f^{[m]}}
+r^{[m](i)} = - \left[\frac{\partial}{\partial f} L\left((y^{(i)},f(x^{(i)})\right)\right]_{f = f^{[m]}}
 $$
 
 -   The pseudo residuals $r^{[m](i)}$ contain weights how to update $f$ to suite the data
