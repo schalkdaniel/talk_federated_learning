@@ -111,7 +111,7 @@ fed_logreg_set1 = getFittingTrace(X = X, y = y, index_list = index_list, max_ite
   vec_iters_at_once = vec_iters_at_once, vec_learning_rates = vec_learning_rates, param_initializer = function (x) {rep(0.25, x) },
   true_beta = true_beta, eps_for_break = 1e-7, extract_global_model = extractGlobalModel)
 
-plot_temp(fed_logreg_set1, plot_title = "Learning Rate 0.01; Iterations at Once: 10", show_averaging = TRUE, X_clean = data$data)
+plot_temp(fed_logreg_set1, plot_title = "Learning Rate 0.01; Iterations at Once: 1000", show_averaging = TRUE, X_clean = data$data)
 ggsave(filename = "images/fed_logreg_non_iid_01_1000.pdf", width = 20, height = 10, units = "cm")
 
 

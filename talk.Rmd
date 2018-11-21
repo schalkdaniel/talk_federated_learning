@@ -21,7 +21,7 @@ output:
 
 **About the analysis**:
 
--   Now a statistician wants to analyze the data and predict whether a patient is sick or not on a single machine (the host)
+-   A statistician wants to analyze the data and predict whether a patient is sick or not on a single machine (the host)
 -   **But:** Most statistical or machine learning approaches require **one** dataset for modeling
 
 \begin{itemize}
@@ -78,7 +78,7 @@ Decentralized learning is a combination of both:
 ## 4 Steps of Federated Learning
 
 1.  The clients pull the current model
-1.  Each client calculates a small update given the client's local dataset
+1.  Each client calculates a small update given its dataset
 1.  The host collects each update from the clients
 1.  The host aggregates the updates and improves the model
 
