@@ -1,7 +1,7 @@
 ---
 title: Introduction to Federated/Decentralized Learning for Gradient-Based Methods
 author: Daniel Schalk
-date: November 21, 2018
+date: November 22, 2018
 output:
   beamer_presentation:
     toc: false
@@ -277,13 +277,29 @@ For visualization purposes we simulate the data without intercept and $p = 2$.
 
 # Boosting and Federated Learning
 
-## Centralized Approaches
+## Boosting
+
+\begin{align*}
+f^{[t]} &= f^{[0]} + \beta b^{[1]} + \dots + \beta b^{[t]} \\
+&= f^{[t-1]} + \beta b^{[t]}
+\end{align*}
+
+-   Sequential fitting of an additive model by refitting base-learner on the previous error
+-   The error is measured as gradient of the given loss function w.r.t. $f$
+-   The base-learner $b^{[t]}$ then represents the functional gradient for the update
+-   Therefore, each iteration reduces the empirical risk on the training data 
+
+\begin{itemize}
+\item[$\Rightarrow$] To apply Federated Learning on Boosting we have to aggregate functions representing the functional gradient
+\end{itemize}
+
+<!-- ## Centralized Approaches
 
 - Distributed Boosting \cite{lazarevic2001distributed}
 - DiVote \cite{chawla2004learning} (parallel IVote \cite{breiman1999pasting}) 
-- PreWeak \cite{cooper2017improved}
+- PreWeak \cite{cooper2017improved} -->
 
-## Gradient Boosting
+<!-- ## Gradient Boosting
 
 In Gradient Boosting we update w.r.t. the model of the previous iteration:
 $$
@@ -295,9 +311,9 @@ r^{[m](i)} = - \left[\frac{\partial}{\partial f} L\left((y^{(i)},f(x^{(i)})\righ
 $$
 
 -   The pseudo residuals $r^{[m](i)}$ contain weights how to update $f$ to suite the data
--   How a specific update look like is defined by the type of the base-learner (trees, linear models, ...)
+-   How a specific update look like is defined by the type of the base-learner (trees, linear models, ...) -->
 
-## The Problem with Boosting and Federated Learning
+<!-- ## The Problem with Boosting and Federated Learning
 
 Applying Federated Learning on the Gradient Boosting algorithm: 
 
@@ -309,16 +325,54 @@ $\Rightarrow$ We have to do that separately for each type of base-learner:
 
 -   Using GLM base-learner (model-based boosting) should be possibly by applying Federated Learning to GLMs
 -   Using tree base-learner should be possible by applying Federated Learning to Trees
--   ...
+-   ... -->
 
+## Federated Learning and Boosting
+
+\includegraphics[width=\textwidth,page=1]{images/federated_boosting.pdf}
+
+## Federated Learning and Boosting
+
+\includegraphics[width=\textwidth,page=2]{images/federated_boosting.pdf}
+\addtocounter{framenumber}{-1}
+
+## Federated Learning and Boosting
+
+\includegraphics[width=\textwidth,page=3]{images/federated_boosting.pdf}
+\addtocounter{framenumber}{-1}
+
+## Federated Learning and Boosting
+
+\includegraphics[width=\textwidth,page=4]{images/federated_boosting.pdf}
+\addtocounter{framenumber}{-1}
+
+## Federated Learning and Boosting
+
+\includegraphics[width=\textwidth,page=5]{images/federated_boosting.pdf}
+\addtocounter{framenumber}{-1}
+
+## Federated Learning and Boosting
+
+\includegraphics[width=\textwidth,page=6]{images/federated_boosting.pdf}
+\addtocounter{framenumber}{-1}
+
+## Federated Learning and Boosting
+
+In iteration $t$:
+
+1.  Each of the $K$ client pulls the actual model $f^{[t-1]}$ and calculates the pseudo residuals $u$ w.r.t. the local dataset $\mathcal{D}_k$
+2.  Given the pseudo residuals, each client calculates the functional gradient $b_k^{[t]}$
+3.  These functional gradients are reported back to the host which applies Federated Averaging to get the final update $b^{[t]}$:
+    $$b^{[t]} = \mathsf{avg}(b_1^{[t]}, \dots, b_K^{[t]})$$
+4.  The final update $b^{[t]}$ is used to get the new model $f^{[t]} = f^{[t-1]} + \beta b^{[t]}$
 
 # What Next
 
 ## Further Topics
 
 -   What information is allowed to be shared?
-
--   Increase privacy by combining Differential Privacy \cite{dwork2008differential} and Federated Learning %(\cite{geyer2017differentially})
+-   Synchronous vs. asynchronous learning 
+-   Increase privacy by combining Differential Privacy (\cite{dwork2008differential}) and Federated Learning \cite{geyer2017differentially}
 
 ## Further Ideas
 
@@ -331,7 +385,7 @@ $\Rightarrow$ We have to do that separately for each type of base-learner:
 
 -   Inherent assessment of the clients data quality  
 
--   Find a general setup to apply Federated Learning to Gradient Boosting 
+-   Varying iterations on client side or use another stop criteria there
 
 # References
 
