@@ -86,7 +86,7 @@ Decentralized learning is a combination of both:
 
 Federated Learning \cite{mcmahan2016communication} as learning on decentralized data with the following challenges:
 
--   **Non-IID:** The training data on a given client is typically based on external influences, and hence any client's local dataset will not be representative of the population distribution.
+-   **Non-IID:** The training data on a given client is typically based on external influences, hence any client's local dataset will not be representative of the population distribution.
 
 -   **Unbalanced:** Similarly, varying amounts of local training data on each client.
 
@@ -112,7 +112,7 @@ Federated Learning \cite{mcmahan2016communication} as learning on decentralized 
 
 ## Gradient Descent
 
-We use Gradient Descent as optimization algorithm. This can be used, for example, to train linear models, general linear models, or neural networks.
+We use Gradient Descent as optimization algorithm. This can be used e.g. to train linear models, general linear models, or neural networks.
 
 **Update Step:**
 
@@ -165,14 +165,14 @@ This algorithm requires communication between host and clients after each iterat
 
 ## Federated Averaging - 3
 
-Instead of making one huge update on the host side, the update is conducted on the client side and average the updates:
+Instead of making one huge update on the host side, the update is conducted on the client side and aggregate the updates:
 $$
 \gamma_k = \hat{\theta}^{[t-1]} - \eta g_k(\hat{\theta}^{[t-1]})
 $$
 $$
 \Rightarrow\ \hat{\theta}^{[t]} = \hat{\theta}^{[t-1]} - \eta \sum\limits_{k = 1}^K \frac{n_k}{n} g_k(\hat{\theta}^{[t-1]}) = \sum\limits_{k = 1}^K\frac{n_k}{n}\gamma_k
 $$
-Additionally, it is possible to use different methods to average the reported updates:
+Additionally, it is possible to use different methods to aggregate the reported updates:
 $$
 \hat{\theta}^{[t]} = \mathsf{avg}(\gamma_1, \dots, \gamma_K) = \sum\limits_{k = 1}^K \frac{n_k}{n} \gamma_{k}
 $$
@@ -208,7 +208,7 @@ $$
 
 ## Federated Averaging - 5
 
-With the Federated Averaging algorithm we can also think about reducing communication costs. Therefore, we conduct $E$ updates in $\mathsf{clientUpdate}$:
+With the Federated Averaging algorithm we can consider reducing communication costs. Therefore, we conduct $E$ updates in $\mathsf{clientUpdate}$:
 
 \scriptsize
 \begin{Shaded}
