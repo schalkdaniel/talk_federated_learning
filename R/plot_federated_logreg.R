@@ -151,7 +151,7 @@ getFittingTrace = function (X, y, index_list, max_iters, vec_iters_at_once, vec_
 
 
 
-plot.fedLearn = function (obj, plot_title = "Federated Learning with Logistic Regression", show_averaging = FALSE)
+plot.fedLearn = function (obj, plot_title = "Federated Learning with Logistic Regression", show_averaging = FALSE, X_clean = NULL)
 {
   X              =  obj[["data"]]
   data_plot_all  =  obj[["trace"]]
@@ -197,6 +197,10 @@ plot.fedLearn = function (obj, plot_title = "Federated Learning with Logistic Re
   margin1 = abs(diff(plot_range1)) * 0.1
   plot_range2 = c(min(c(data_all$Feature2, glm_single$Feature2, true_beta[2])), max(c(data_all$Feature2, glm_single$Feature2, true_beta[2])))
   margin2 = abs(diff(plot_range2)) * 0.1
+
+  if (! is.null(X_clean[1])) {
+    X = as.matrix(X_clean)
+  }
 
   # Calculate data frame with the surface:
   data_surface = expand.grid(

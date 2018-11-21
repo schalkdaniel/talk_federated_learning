@@ -29,7 +29,7 @@ fed_logreg_iid = getFittingTrace(X = X, y = y, index_list = index_list, max_iter
   vec_iters_at_once = vec_iters_at_once, vec_learning_rates = vec_learning_rates, 
   true_beta = true_beta, eps_for_break = 1e-7)
 
-plot(fed_logreg_iid, plot_title = "Federated Logistic Regression with Simulated IID Situation", show_averaging = TRUE)
+plot(fed_logreg_iid, plot_title = "Federated Logistic Regression with Simulated IID Situation", show_averaging = TRUE, X_clean = data$data)
 # ggsave(filename = "images/fed_logreg_iid.pdf", width = 50, height = 30, units = "cm")
 
 
@@ -62,7 +62,7 @@ fed_logreg_set1 = getFittingTrace(X = X, y = y, index_list = index_list, max_ite
   vec_iters_at_once = vec_iters_at_once, vec_learning_rates = vec_learning_rates, 
   true_beta = true_beta, eps_for_break = 1e-7, extract_global_model = extractGlobalModel)
 
-plot(fed_logreg_set1, plot_title = "Federated Logistic Regression with Destroyed Feature of Dataset 3", show_averaging = TRUE)
+plot(fed_logreg_set1, plot_title = "Federated Logistic Regression with Destroyed Feature of Dataset 3", show_averaging = TRUE, X_clean = data$data)
 # ggsave("images/fed_logreg_set1.pdf", width = 50, height = 30, units = "cm")
 
 
@@ -88,7 +88,7 @@ fed_logreg_iid_ub = getFittingTrace(X = X, y = y, index_list = index_list, max_i
   vec_iters_at_once = vec_iters_at_once, vec_learning_rates = vec_learning_rates, 
   true_beta = true_beta, eps_for_break = 1e-7)
 
-plot(fed_logreg_iid_ub, plot_title = "Federated Logistic Regression with IID Setup", show_averaging = TRUE)
+plot(fed_logreg_iid_ub, plot_title = "Federated Logistic Regression with IID Setup", show_averaging = TRUE, X_clean = data$data)
 # ggsave(filename = "images/fed_logreg_iid_ub.pdf", width = 50, height = 30, units = "cm")
 
 
@@ -121,5 +121,5 @@ fed_logreg_ub_non_iid = getFittingTrace(X = X, y = y, index_list = index_list, m
   vec_iters_at_once = vec_iters_at_once, vec_learning_rates = vec_learning_rates, 
   true_beta = true_beta, eps_for_break = 1e-7)
 
-plot(fed_logreg_ub_non_iid, plot_title = "Federated Logistic Regression with Unbalanced and Non-IID Setup", show_averaging = TRUE)
+plot(fed_logreg_ub_non_iid, plot_title = "Federated Logistic Regression with Unbalanced and Non-IID Setup", show_averaging = TRUE, X_clean = data$data)
 # ggsave(filename = "images/fed_logreg_ub_non_iid.pdf", width = 50, height = 30, units = "cm")

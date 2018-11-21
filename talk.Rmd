@@ -21,14 +21,12 @@ output:
 
 **About the analysis:**
 
--   Now a statistician wants to analyze the data and predict whether a patient is diseased or not on a global machine (the host)
--   **But:** Most statistical or machine learning approaches require **one** database for modeling
+-   Now a statistician wants to analyze the data and predict whether a patient is sick or not on a single machine (the host)
+-   **But:** Most statistical or machine learning approaches require **one** dataset for modeling
 
 \begin{itemize}
-  \item[$\Rightarrow$] We want to learn one model on decentralized datasets distributed over multiple sources.
+  \item[$\Rightarrow$] We want to learn one model on decentralized datasets distributed over multiple clients.
 \end{itemize}
-
-\includegraphics[width=4cm,page=6]{images/federated_learning.pdf}
 
 <!-- ## Distributed Learning
 
@@ -43,11 +41,19 @@ Decentralized learning is a combination of both:
 
 ## Federated Learning
 
+
+<!-- We want to analyze data and train models on our machine (the host) -->
+
+\begin{center}
 \includegraphics[width=\textwidth,page=1]{images/federated_learning.pdf}
+\end{center}
 
 ## Federated Learning
 
+\begin{center}
 \includegraphics[width=\textwidth,page=2]{images/federated_learning.pdf}
+\end{center}
+
 \addtocounter{framenumber}{-1}
 
 ## Federated Learning
@@ -70,9 +76,16 @@ Decentralized learning is a combination of both:
 \includegraphics[width=\textwidth,page=6]{images/federated_learning.pdf}
 \addtocounter{framenumber}{-1}
 
+## 4 Steps of Federated Learning
+
+1.  The clients pull the current model
+1.  Each client calculates a small update given the client's local dataset
+1.  The host collects each update from the clients
+1.  The host aggregates the updates and improves the model
+
 ## Common Problems in Decentralized/Federated Learning 
 
-Federated Learning \cite{mcmahan2016communication} as learning on decentralized data with the following properties:
+Federated Learning \cite{mcmahan2016communication} as learning on decentralized data with the following challenges:
 
 -   **Non-IID:** The training data on a given client is typically based on external influences, and hence any client's local dataset will not be representative of the population distribution.
 
@@ -96,14 +109,16 @@ Federated Learning \cite{mcmahan2016communication} as learning on decentralized 
 | **Loss Function**    | $L\left(y, \hat{y}\right)$                |
 | **Dataset**          | $\mathcal{D} = (x^{(i)}, y^{(i)}),\ \forall i \in \{1, \dots n\}$ |
 | **Empirical Risk**   | $\mathcal{R}_\mathsf{emp}(\mathcal{D}, \hat{\theta}) = \frac{1}{n}\sum\limits_{(x,y) \in \mathcal{D}} L\left(y, f(x,\hat{\theta})\right)$ |
-| **Risk**             | $\mathcal{R}(\mathcal{D}, \hat{\theta}) = \mathcal{R}_\mathsf{emp}(\mathcal{D}, \hat{\theta}) + \lambda C(\theta)$ | 
+| **Risk**             | $\mathcal{R}(\hat{\theta}) = \mathcal{R}_\mathsf{emp}(\mathcal{D}, \hat{\theta}) + \lambda C(\theta)$ | 
 
 ## Gradient Descent
+
+We use Gradient Descent as optimization algorithm. This can be used, for example, to train linear models, general linear models, or neural networks.
 
 **Update Step:**
 
 \begin{align*}
-\hat{\theta}^{[t+1]} &= \hat{\theta}^{[t]} - \eta\nabla_\theta \mathcal{R}(\mathcal{D}, \hat{\theta}^{[t]}) \\
+\hat{\theta}^{[t+1]} &= \hat{\theta}^{[t]} - \eta\nabla\mathcal{R}(\hat{\theta}^{[t]}) \\
 &= \hat{\theta}^{[t]} - \eta g(\hat{\theta}^{[t]})
 \end{align*}
 
@@ -113,8 +128,8 @@ Federated Learning \cite{mcmahan2016communication} as learning on decentralized 
 ## Federated Averaging - 1
 
 -   We now got $K$ different clients
--   Each client holds a non-distributable local dataset $\mathcal{D}_k$, $k \in \{1, \dots, K\}$ with $n_k$ observations
--   Each dataset gives a risk $\mathcal{R}(\mathcal{D}_k, \theta)$ $\rightarrow$ $g_k(\theta) = \nabla_\theta\mathcal{R}(\mathcal{D}_k, \theta)$
+-   Each client holds a local dataset $\mathcal{D}_k$, $k \in \{1, \dots, K\}$ with $n_k$ observations
+-   Each dataset gives a risk $\mathcal{R}_k(\theta)$ $\rightarrow$ $g_k(\theta) = \nabla\mathcal{R}_k(\theta)$
 
 \begin{itemize}
   \item[$\Rightarrow$] How to find a good model (represented by $\hat{\theta}$) optimizing the global empirical Risk but trained on all local datasets
@@ -160,7 +175,7 @@ $$
 $$
 Additionally, it is possible to use different methods to average the reported updates:
 $$
-\hat{\theta}^{[t]} = \mathsf{avg}(\gamma_1, \dots, \gamma_K, \alpha) = \sum\limits_{k = 1}^K \frac{n_k}{n} \gamma_{k}
+\hat{\theta}^{[t]} = \mathsf{avg}(\gamma_1, \dots, \gamma_K) = \sum\limits_{k = 1}^K \frac{n_k}{n} \gamma_{k}
 $$
 
 ## Federated Averaging - 4
@@ -182,19 +197,19 @@ $$
       Report $\gamma_{k}$ to host\;
     }
     \tcc{Host conduct Federated Averaging step:}
-    $\hat{\theta}^{[t]} = \mathsf{avg}(\gamma_1, \dots, \gamma_K, \alpha)$\;
+    $\hat{\theta}^{[t]} = \mathsf{avg}(\gamma_1, \dots, \gamma_K)$\;
     Check if stop criteria is reached, e.g. $\|\hat{\theta}^{[t]} - \hat{\theta}^{[t-1]}\|_2 < \varepsilon$\;
     Increment $t \leftarrow t + 1$ \;
   }
-\caption{Federated Averaging Algorithm}\label{fedavg}
 \end{algorithm}
+\begin{center}{\normalsize Federated Averaging Algorithm}\end{center}
 \end{Shaded}
 
 \normalsize
 
 ## Federated Averaging - 5
 
-With algorithm \ref{fedavg} we can also think about reducing communication costs. Therefore, we conduct $E$ updates in $\mathsf{clientUpdate}$:
+With the Federated Averaging algorithm we can also think about reducing communication costs. Therefore, we conduct $E$ updates in $\mathsf{clientUpdate}$:
 
 \scriptsize
 \begin{Shaded}
@@ -207,8 +222,8 @@ With algorithm \ref{fedavg} we can also think about reducing communication costs
     $\gamma_{k,i} = \gamma_{k,i-1} - \eta g_k(\gamma_{k,i-1})$\;
   }
   Report $\gamma_k = \gamma_{k,E}$ to host\;  
-\caption{Communication reduction in $\mathsf{clientUpdate}$}
 \end{algorithm}
+\begin{center}{\normalsize $\mathsf{clientUpdate}$ Algorithm}\end{center}
 \end{Shaded}
 \normalsize
 
@@ -224,55 +239,22 @@ With algorithm \ref{fedavg} we can also think about reducing communication costs
 
 ## Example with Logistic Regression
 
--   We assume that there are $4$ hospitals, each with a local non-distributable dataset
--   The task is to predict whether a patient is diseased or not
+Again, think about the situation from the beginning: 
+
+-   There are $4$ hospitals, each with a local dataset
+-   The task is to predict whether a patient is sick or not
 -   We want to train a logistic regression using the Federated Learning framework
 
-## Logistic Regression
+## Data Simulation
 
-Parts we need to apply Federated Learning:
+-   Simulation of $K$ "local datasets" under consideration of different data situations:
+    -   **Setup 1:** Balanced and iid
+    -   **Setup 2:** One variable of dataset 3 gets biased parameters (e.g. damaged sensor)
+    -   **Setup 3:** Unbalanced but iid 
+    -   **Setup 4:** Unbalanced and non-iid (the parameters are biased depending on the client)
 
--   **Loss Function/Negative Log-Likelihood** $$L\left(y, f(x, \theta)\right) = -y \log\left(f(x, \theta)\right) - (1 - y) \log\left(1 - f(x, \theta)\right)$$
--   **Response Function** $$f(x) = \left(1 + \exp\left(-x^T\theta\right)\right)^{-1}$$
--   **Derivative of the Loss Function** $$\frac{\partial}{\partial\theta}L(y,f\left(x,\theta)\right) = x \left(y - f(x,\theta)\right)$$
 
-## Simulation Setup - 1
-
--   Correlations are simulated from beta distribution $$r_{ij} \sim B(1,2) \ \ \text{for} \ \ i \neq j,\ r_{ii} = 1$$
--   Dataset is simulated using a multivariate normal distribution $$x^{(i)} \sim N_p(\mu, R)$$
--   Binary labels are generated by sampling from Bernoulli distribution $$ y^{(i)} \sim B\left(1,f(x^{(i)})\right)$$
-
-## Simulation Setup - 2
-
--   The dataset is split into $K$ "local datasets" under consideration of different data situations:
-    -   **Setup 1:** Local datasets are IID
-    -   **Setup 2:** One variable of one of the IID datasets gets a bias (e.g. damaged sensor)
-    -   **Setup 3:** Unbalanced local datasets
-    -   **Setup 4:** Unbalanced and non-IID, but with biases that have a mean of zero
-
-## Simulation Setup - 3
-
--   We conduct Federated Averaging until the norm of the update $\|\hat{\theta}^{[t]} - \hat{\theta}^{[t-1]}\|_2$ is smaller than $10^{-7}$ for varying learning rates $\eta$ and number of updates at once $E$:
-    -   $\eta \in \{0.001, 0.01, 0.05, 0.1\}$
-    -   $E \in \{1, 10, 100, 1000, 2000\}$
-
-For visualization purposes we simulate the data without intercept and $p = 2$.
-
-## Visualization Setup 1
-
-\includegraphics[width=\textwidth]{images/fed_logreg_iid.pdf}
-
-## Visualization Setup 2
-
-\includegraphics[width=\textwidth]{images/fed_logreg_set1.pdf}
-
-## Visualization Setup 3
-
-\includegraphics[width=\textwidth]{images/fed_logreg_iid_ub.pdf}
-
-## Visualization Setup 4
-
-\includegraphics[width=\textwidth]{images/fed_logreg_ub_non_iid.pdf}
+## Visualization - Setup 1
 
 
 # Boosting and Federated Learning
@@ -284,13 +266,13 @@ f^{[t]} &= f^{[0]} + \beta b^{[1]} + \dots + \beta b^{[t]} \\
 &= f^{[t-1]} + \beta b^{[t]}
 \end{align*}
 
--   Sequential fitting of an additive model by refitting base-learner on the previous error
+-   Sequential fitting of an additive model by training base-learner on the previous error
 -   The error is measured as gradient of the given loss function w.r.t. $f$
 -   The base-learner $b^{[t]}$ then represents the functional gradient for the update
--   Therefore, each iteration reduces the empirical risk on the training data 
+<!-- -   Therefore, each iteration reduces the empirical risk on the training data  -->
 
 \begin{itemize}
-\item[$\Rightarrow$] To apply Federated Learning on Boosting we have to aggregate functions representing the functional gradient
+\item[$\Rightarrow$] To apply Federated Learning on Boosting we have to aggregate the functional gradient
 \end{itemize}
 
 <!-- ## Centralized Approaches
@@ -366,7 +348,7 @@ In iteration $t$:
     $$b^{[t]} = \mathsf{avg}(b_1^{[t]}, \dots, b_K^{[t]})$$
 4.  The final update $b^{[t]}$ is used to get the new model $f^{[t]} = f^{[t-1]} + \beta b^{[t]}$
 
-# What Next
+# What's Next
 
 ## Further Topics
 
@@ -376,16 +358,16 @@ In iteration $t$:
 
 ## Further Ideas
 
--   Experiments with different averaging approaches for $\mathsf{avg}(\gamma_1, \dots, \gamma_K, \alpha)$:
-    -   Use of other optimizer, such as momentum or adagrad
+-   Experiments with different averaging approaches for $\mathsf{avg}(\gamma_1, \dots, \gamma_K)$:
+<!--     -   Use of other optimizer, such as momentum or adagrad
     -   Reweighting of the updates by applying Bayes theorem
-    -   Train $\mathsf{avg}$ as surrogate model during the fitting process 
+    -   Train $\mathsf{avg}$ as surrogate model during the fitting process  -->
 
--   Inherent evaluation on local datasets during the fitting process
+-   Performance evaluation on local datasets during the fitting process
 
--   Inherent assessment of the clients data quality  
+-   Assessment of the clients data quality  
 
--   Varying iterations on client side or use another stop criteria there
+-   Varying iterations on client side
 
 # References
 
@@ -394,3 +376,48 @@ In iteration $t$:
 \scriptsize
 \bibliographystyle{apalike}
 \bibliography{references}
+
+
+# Backup Slides
+
+## Logistic Regression {.plain}
+
+\addtocounter{framenumber}{-1}
+
+Parts we need to apply Federated Learning:
+
+-   **Loss Function/Negative Log-Likelihood** $$L\left(y, f(x, \theta)\right) = -y \log\left(f(x, \theta)\right) - (1 - y) \log\left(1 - f(x, \theta)\right)$$
+-   **Response Function** $$f(x, \theta) = \left(1 + \exp\left(-x^T\theta\right)\right)^{-1}$$
+-   **Derivative of the Loss Function** $$\frac{\partial}{\partial\theta}L(y,f\left(x,\theta)\right) = x \left(y - f(x,\theta)\right)$$
+
+## Data Simulation - 1 {.plain}
+
+\addtocounter{framenumber}{-1}
+
+-   Correlations are simulated from beta distribution $$r_{ij} \sim B(1,2) \ \ \text{for} \ \ i \neq j,\ r_{ii} = 1$$
+-   Dataset is simulated using a multivariate normal distribution $$x^{(i)} \sim N_p(\mu, R)$$
+-   Binary labels are generated by sampling from Bernoulli distribution $$ y^{(i)} \sim B\left(1,f(x^{(i)})\right)$$
+
+## Data Simulation - 2 {.plain}
+
+-   We conduct Federated Averaging until the norm of the update $\|\hat{\theta}^{[t]} - \hat{\theta}^{[t-1]}\|_2$ is smaller than $10^{-7}$ for varying learning rates $\eta$ and number of updates at once $E$:
+    -   $\eta \in \{0.001, 0.01, 0.05, 0.1\}$
+    -   $E \in \{1, 10, 100, 1000, 2000\}$
+
+For visualization purposes we simulate the data without intercept and $p = 2$.
+
+## Visualization - Setup 1 {.plain}
+
+\includegraphics[width=\textwidth]{images/fed_logreg_iid.pdf}
+
+## Visualization - Setup 2 {.plain}
+
+\includegraphics[width=\textwidth]{images/fed_logreg_set1.pdf}
+
+## Visualization - Setup 3 {.plain}
+
+\includegraphics[width=\textwidth]{images/fed_logreg_iid_ub.pdf}
+
+## Visualization - Setup 4 {.plain}
+
+\includegraphics[width=\textwidth]{images/fed_logreg_ub_non_iid.pdf}
