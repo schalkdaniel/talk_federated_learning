@@ -25,7 +25,7 @@ output:
 -   **But:** Most statistical or machine learning approaches require **one** dataset for modeling
 
 \begin{itemize}
-  \item[$\Rightarrow$] We want to learn one model on decentralized datasets distributed over multiple clients.
+  \item[$\Rightarrow$] We want to learn one model on datasets distributed over multiple clients (decentralized learning).
 \end{itemize}
 
 <!-- ## Distributed Learning
@@ -41,7 +41,6 @@ Decentralized learning is a combination of both:
 
 ## Federated Learning
 
-
 <!-- We want to analyze data and train models on our machine (the host) -->
 
 \begin{center}
@@ -56,22 +55,22 @@ Decentralized learning is a combination of both:
 
 \addtocounter{framenumber}{-1}
 
-## Federated Learning
+## Federated Learning - Step 1
 
 \includegraphics[width=\textwidth,page=3]{images/federated_learning.pdf}
 \addtocounter{framenumber}{-1}
 
-## Federated Learning
+## Federated Learning - Step 2
 
 \includegraphics[width=\textwidth,page=4]{images/federated_learning.pdf}
 \addtocounter{framenumber}{-1}
 
-## Federated Learning
+## Federated Learning - Step 3
 
 \includegraphics[width=\textwidth,page=5]{images/federated_learning.pdf}
 \addtocounter{framenumber}{-1}
 
-## Federated Learning
+## Federated Learning - Step 4
 
 \includegraphics[width=\textwidth,page=6]{images/federated_learning.pdf}
 \addtocounter{framenumber}{-1}
