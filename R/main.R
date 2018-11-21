@@ -33,6 +33,31 @@ plot(fed_logreg_iid, plot_title = "Federated Logistic Regression with Simulated 
 # ggsave(filename = "images/fed_logreg_iid.pdf", width = 50, height = 30, units = "cm")
 
 
+max_iters = 100000L
+vec_learning_rates = 0.01
+vec_iters_at_once = 10
+true_beta = data$params[-1]
+
+fed_logreg_iid = getFittingTrace(X = X, y = y, index_list = index_list, max_iters = max_iters, 
+  vec_iters_at_once = vec_iters_at_once, vec_learning_rates = vec_learning_rates, param_initializer = function (x) {rep(0.25, x) },
+  true_beta = true_beta, eps_for_break = 1e-7)
+
+plot_temp(fed_logreg_iid, plot_title = "Learning Rate 0.01; Iterations at Once: 10", show_averaging = TRUE, X_clean = data$data)
+ggsave(filename = "images/fed_logreg_iid_01_10.pdf", width = 20, height = 10, units = "cm")
+
+
+max_iters = 100000L
+vec_learning_rates = 0.01
+vec_iters_at_once = 1000
+true_beta = data$params[-1]
+
+fed_logreg_iid = getFittingTrace(X = X, y = y, index_list = index_list, max_iters = max_iters, 
+  vec_iters_at_once = vec_iters_at_once, vec_learning_rates = vec_learning_rates, param_initializer = function (x) {rep(0.25, x) },
+  true_beta = true_beta, eps_for_break = 1e-7)
+
+plot_temp(fed_logreg_iid, plot_title = "Learning Rate 0.01; Iterations at Once: 1000", show_averaging = TRUE, X_clean = data$data)
+ggsave(filename = "images/fed_logreg_iid_01_1000.pdf", width = 20, height = 10, units = "cm")
+
 
 # Setting 2: Non-IID
 # ------------------------------------------
@@ -65,6 +90,29 @@ fed_logreg_set1 = getFittingTrace(X = X, y = y, index_list = index_list, max_ite
 plot(fed_logreg_set1, plot_title = "Federated Logistic Regression with Destroyed Feature of Dataset 3", show_averaging = TRUE, X_clean = data$data)
 # ggsave("images/fed_logreg_set1.pdf", width = 50, height = 30, units = "cm")
 
+max_iters = 100000L
+vec_learning_rates = 0.01
+vec_iters_at_once = 10
+true_beta = data$params[-1]
+
+fed_logreg_set1 = getFittingTrace(X = X, y = y, index_list = index_list, max_iters = max_iters, 
+  vec_iters_at_once = vec_iters_at_once, vec_learning_rates = vec_learning_rates, param_initializer = function (x) {rep(0.25, x) },
+  true_beta = true_beta, eps_for_break = 1e-7, extract_global_model = extractGlobalModel)
+
+plot_temp(fed_logreg_set1, plot_title = "Learning Rate 0.01; Iterations at Once: 10", show_averaging = TRUE, X_clean = data$data)
+ggsave(filename = "images/fed_logreg_non_iid_01_10.pdf", width = 20, height = 10, units = "cm")
+
+max_iters = 100000L
+vec_learning_rates = 0.01
+vec_iters_at_once = 1000
+true_beta = data$params[-1]
+
+fed_logreg_set1 = getFittingTrace(X = X, y = y, index_list = index_list, max_iters = max_iters, 
+  vec_iters_at_once = vec_iters_at_once, vec_learning_rates = vec_learning_rates, param_initializer = function (x) {rep(0.25, x) },
+  true_beta = true_beta, eps_for_break = 1e-7, extract_global_model = extractGlobalModel)
+
+plot_temp(fed_logreg_set1, plot_title = "Learning Rate 0.01; Iterations at Once: 10", show_averaging = TRUE, X_clean = data$data)
+ggsave(filename = "images/fed_logreg_non_iid_01_1000.pdf", width = 20, height = 10, units = "cm")
 
 
 # Setting 3: IID Unbalanced
@@ -85,12 +133,24 @@ vec_iters_at_once = c(1, 10, 100, 1000, 2000)
 true_beta = data$params[-1]
 
 fed_logreg_iid_ub = getFittingTrace(X = X, y = y, index_list = index_list, max_iters = max_iters, 
-  vec_iters_at_once = vec_iters_at_once, vec_learning_rates = vec_learning_rates, 
+  vec_iters_at_once = vec_iters_at_once, vec_learning_rates = vec_learning_rates,
   true_beta = true_beta, eps_for_break = 1e-7)
 
 plot(fed_logreg_iid_ub, plot_title = "Federated Logistic Regression with IID Setup", show_averaging = TRUE, X_clean = data$data)
 # ggsave(filename = "images/fed_logreg_iid_ub.pdf", width = 50, height = 30, units = "cm")
 
+
+max_iters = 100000L
+vec_learning_rates = 0.01
+vec_iters_at_once = 10
+true_beta = data$params[-1]
+
+fed_logreg_iid_ub = getFittingTrace(X = X, y = y, index_list = index_list, max_iters = max_iters, 
+  vec_iters_at_once = vec_iters_at_once, vec_learning_rates = vec_learning_rates,  param_initializer = function (x) {rep(0.25, x) },
+  true_beta = true_beta, eps_for_break = 1e-7)
+
+plot_temp(fed_logreg_iid_ub, plot_title = "Learning Rate 0.01; Iterations at Once: 10", show_averaging = TRUE, X_clean = data$data)
+ggsave(filename = "images/fed_logreg_iid_ub_01_10.pdf", width = 20, height = 10, units = "cm")
 
 # Setting 4: Completely non-IID
 # ------------------------------------------
@@ -123,3 +183,32 @@ fed_logreg_ub_non_iid = getFittingTrace(X = X, y = y, index_list = index_list, m
 
 plot(fed_logreg_ub_non_iid, plot_title = "Federated Logistic Regression with Unbalanced and Non-IID Setup", show_averaging = TRUE, X_clean = data$data)
 # ggsave(filename = "images/fed_logreg_ub_non_iid.pdf", width = 50, height = 30, units = "cm")
+
+
+
+
+max_iters = 100000L
+vec_learning_rates = 0.01
+vec_iters_at_once = 10
+true_beta = data$params[-1]
+
+fed_logreg_ub_non_iid = getFittingTrace(X = X, y = y, index_list = index_list, max_iters = max_iters, 
+  vec_iters_at_once = vec_iters_at_once, vec_learning_rates = vec_learning_rates, param_initializer = function (x) {rep(0.25, x) },
+  true_beta = true_beta, eps_for_break = 1e-7)
+
+plot_temp(fed_logreg_ub_non_iid, plot_title = "Learning Rate 0.01; Iterations at Once: 10", show_averaging = TRUE, X_clean = data$data)
+ggsave(filename = "images/fed_logreg_non_iid_ub_01_10.pdf", width = 20, height = 10, units = "cm")
+
+
+
+max_iters = 100000L
+vec_learning_rates = 0.01
+vec_iters_at_once = 1000
+true_beta = data$params[-1]
+
+fed_logreg_ub_non_iid = getFittingTrace(X = X, y = y, index_list = index_list, max_iters = max_iters, 
+  vec_iters_at_once = vec_iters_at_once, vec_learning_rates = vec_learning_rates, param_initializer = function (x) {rep(0.25, x) },
+  true_beta = true_beta, eps_for_break = 1e-7)
+
+plot_temp(fed_logreg_ub_non_iid, plot_title = "Learning Rate 0.01; Iterations at Once: 1000", show_averaging = TRUE, X_clean = data$data)
+ggsave(filename = "images/fed_logreg_non_iid_ub_01_1000.pdf", width = 20, height = 10, units = "cm")

@@ -14,12 +14,12 @@ output:
 
 ## The Problem
 
-**About the data:**
+**About the data**:
 
 -   4 Hospitals (we call them clients), each one holds data about patients and a disease
 -   For data protection reasons, these data may not be combined
 
-**About the analysis:**
+**About the analysis**:
 
 -   Now a statistician wants to analyze the data and predict whether a patient is sick or not on a single machine (the host)
 -   **But:** Most statistical or machine learning approaches require **one** dataset for modeling
@@ -249,11 +249,37 @@ Again, think about the situation from the beginning:
 -   Simulation of $K$ "local datasets" under consideration of different data situations:
     -   **Setup 1:** Balanced and iid
     -   **Setup 2:** One variable of dataset 3 gets biased parameters (e.g. damaged sensor)
-    -   **Setup 3:** Unbalanced but iid 
-    -   **Setup 4:** Unbalanced and non-iid (the parameters are biased depending on the client)
+    <!-- -   **Setup 3:** Unbalanced but iid  -->
+    <!-- -   **Setup 4:** Unbalanced and non-iid (the parameters are biased depending on the client) -->
 
 
 ## Visualization - Setup 1
+
+\includegraphics[width=\textwidth]{images/fed_logreg_iid_01_10.pdf}
+
+## Visualization - Setup 1
+
+\includegraphics[width=\textwidth]{images/fed_logreg_iid_01_1000.pdf}
+
+## Visualization - Setup 2
+
+\includegraphics[width=\textwidth]{images/fed_logreg_non_iid_01_10.pdf}
+
+## Visualization - Setup 2
+
+\includegraphics[width=\textwidth]{images/fed_logreg_non_iid_01_1000.pdf}
+
+<!-- ## Visualization - Setup 3 -->
+
+<!-- \includegraphics[width=\textwidth]{images/fed_logreg_iid_ub_01_10.pdf} -->
+
+<!-- ## Visualization - Setup 4 -->
+
+<!-- \includegraphics[width=\textwidth]{images/fed_logreg_non_iid_ub_01_10.pdf} -->
+
+<!-- ## Visualization - Setup 4 -->
+
+<!-- \includegraphics[width=\textwidth]{images/fed_logreg_non_iid_ub_01_1000.pdf} -->
 
 
 # Boosting and Federated Learning
@@ -372,6 +398,8 @@ In iteration $t$:
 
 ## {.allowframebreaks .plain}
 
+\addtocounter{framenumber}{-1}
+
 \scriptsize
 \bibliographystyle{apalike}
 \bibliography{references}
@@ -399,6 +427,8 @@ Parts we need to apply Federated Learning:
 
 ## Data Simulation - 2 {.plain}
 
+\addtocounter{framenumber}{-1}
+
 -   We conduct Federated Averaging until the norm of the update $\|\hat{\theta}^{[t]} - \hat{\theta}^{[t-1]}\|_2$ is smaller than $10^{-7}$ for varying learning rates $\eta$ and number of updates at once $E$:
     -   $\eta \in \{0.001, 0.01, 0.05, 0.1\}$
     -   $E \in \{1, 10, 100, 1000, 2000\}$
@@ -407,16 +437,24 @@ For visualization purposes we simulate the data without intercept and $p = 2$.
 
 ## Visualization - Setup 1 {.plain}
 
+\addtocounter{framenumber}{-1}
+
 \includegraphics[width=\textwidth]{images/fed_logreg_iid.pdf}
 
 ## Visualization - Setup 2 {.plain}
+
+\addtocounter{framenumber}{-1}
 
 \includegraphics[width=\textwidth]{images/fed_logreg_set1.pdf}
 
 ## Visualization - Setup 3 {.plain}
 
+\addtocounter{framenumber}{-1}
+
 \includegraphics[width=\textwidth]{images/fed_logreg_iid_ub.pdf}
 
 ## Visualization - Setup 4 {.plain}
+
+\addtocounter{framenumber}{-1}
 
 \includegraphics[width=\textwidth]{images/fed_logreg_ub_non_iid.pdf}
