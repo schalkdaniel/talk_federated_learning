@@ -1,7 +1,8 @@
 ---
-title: Introduction to Federated/Decentralized Learning for Gradient-Based Methods
+title: Evaluation of Distributed Computing Frameworks
+subtitle: DIFUTURE Workshop
 author: Daniel Schalk
-date: November 22, 2018
+date: September 5, 2019
 output:
   beamer_presentation:
     toc: false
@@ -10,13 +11,17 @@ output:
     template: "style/custom_pandoc.tex"
 ---
 
-# Federated/Decentralized Learning
+
+# DIFUTURE Workshop 05.09.2019
+
 
 ## The Problem
 
+\addtocounter{framenumber}{-1}
+
 **About the data**:
 
--   4 Hospitals (we call them clients), each one holds data about patients and a disease
+-   4 Hospitals (we call them clients/sites), each one holds data about patients and a disease
 -   For data protection reasons, these data may not be combined
 
 **About the analysis**:
@@ -28,433 +33,114 @@ output:
   \item[$\Rightarrow$] We want to learn one model on datasets distributed over multiple clients (decentralized learning).
 \end{itemize}
 
-<!-- ## Distributed Learning
 
-Different approaches of parallelization in centralized learning:
 
--   **Algorithmic:** The learning algorithm naturally supports parallelization, e.g. Random Forest
--   **Data:** Data are distributed over multiple machines (idea behind Hadoop and Spark), e.g. map reduce
+```{r, echo=FALSE, results="asis"}
+for (image in seq_len(7)) {
+  cat(paste0("
 
-Decentralized learning is a combination of both:
+## General Concept
 
--   Data are distributed over multiple machines and the algorithm must be able to learn on the local datasets -->
+", ifelse(image > 1, "\\addtocounter{framenumber}{-1}", ""), "
+\\includegraphics[width=\\textwidth, page=", image, "]{images/federated_learning.pdf}
 
-## Federated Learning
+"))
+}
+```
 
-<!-- We want to analyze data and train models on our machine (the host) -->
+
+
+## Performance Evaluation of Distributed Learning Systems
+
+<!-- Evaluation should be done as close as possible to the real conditions. -->
+
+- To evaluate the performance we usually resample the model \ $\rightarrow$ Not clear how to resample due to the decentralized dataset
+
+-   Possible approaches:
+    -   Leave k sites out evaluation
+    -   Partitioning of individual datasets:
+        -   Split individual datasets and train federated learning model on the individual ones
+        -   Subsampling across all sites
+
+What is the data generating process? Is the hospital an important factor (can we account for that)? Do new hospitals want to use the model?
+
+<!-- Werden neue daten auch von neuen Krankenhäusern geliefert? -->
+
+## Leave k Datasets Out
 
 \begin{center}
-\includegraphics[width=\textwidth,page=1]{images/federated_learning.pdf}
+  \includegraphics[width=0.5\textwidth, page=1]{images/fed_learn_leave_site_out.pdf}\includegraphics[width=0.5\textwidth, page=5]{images/fed_learn_leave_site_out.pdf}
 \end{center}
 
-## Federated Learning
+## Leave k Datasets Out
 
+\addtocounter{framenumber}{-1}
 \begin{center}
-\includegraphics[width=\textwidth,page=2]{images/federated_learning.pdf}
+  \includegraphics[width=0.5\textwidth, page=2]{images/fed_learn_leave_site_out.pdf}\includegraphics[width=0.5\textwidth, page=6]{images/fed_learn_leave_site_out.pdf}
 \end{center}
 
-\addtocounter{framenumber}{-1}
-
-## Federated Learning - Step 1
-
-\includegraphics[width=\textwidth,page=3]{images/federated_learning.pdf}
-\addtocounter{framenumber}{-1}
-
-## Federated Learning - Step 2
-
-\includegraphics[width=\textwidth,page=4]{images/federated_learning.pdf}
-\addtocounter{framenumber}{-1}
-
-## Federated Learning - Step 3
-
-\includegraphics[width=\textwidth,page=5]{images/federated_learning.pdf}
-\addtocounter{framenumber}{-1}
-
-## Federated Learning - Step 4
-
-\includegraphics[width=\textwidth,page=6]{images/federated_learning.pdf}
-\addtocounter{framenumber}{-1}
-
-## 4 Steps of Federated Learning
-
-1.  The clients pull the current model
-1.  Each client calculates a small update given its dataset
-1.  The host collects each update from the clients
-1.  The host aggregates the updates and improves the model
-
-## Common Problems in Decentralized/Federated Learning 
-
-Federated Learning \cite{mcmahan2016communication} as learning on decentralized data with the following challenges:
-
--   **Non-IID:** The training data on a given client is typically based on external influences, hence any client's local dataset will not be representative of the population distribution.
-
--   **Unbalanced:** Similarly, varying amounts of local training data on each client.
-
--   **Distributed:** We expect the number of clients participating in an optimization round to be larger than one.
-
--   **Limited communication:** Clients are frequently offline or on slow and/or expensive connections. \
-    $\Rightarrow$ New resource **communication**
-
-
-## Terminology
-
-|                      |                                           |
-|:-------------------- |:-----------------------------------------:|
-| **Feature Vector**   | $x \in \mathcal{X}$                       |
-| **Target Variable**  | $y \in \mathcal{Y}$                       |
-| **Parameter Vector** | $\theta \in \Theta$                       |
-| **Model**            | $f : \mathcal{X} \rightarrow \mathcal{Y}$ |
-| **Prediction**       | $\hat{y} = f(x, \hat{\theta})$            |
-| **Loss Function**    | $L\left(y, \hat{y}\right)$                |
-| **Dataset**          | $\mathcal{D} = (x^{(i)}, y^{(i)}),\ \forall i \in \{1, \dots n\}$ |
-| **Empirical Risk**   | $\mathcal{R}_\mathsf{emp}(\mathcal{D}, \hat{\theta}) = \frac{1}{n}\sum\limits_{(x,y) \in \mathcal{D}} L\left(y, f(x,\hat{\theta})\right)$ |
-| **Risk**             | $\mathcal{R}(\hat{\theta}) = \mathcal{R}_\mathsf{emp}(\mathcal{D}, \hat{\theta}) + \lambda C(\theta)$ | 
-
-## Gradient Descent
-
-We use Gradient Descent as optimization algorithm. This can be used e.g. to train linear models, general linear models, or neural networks.
-
-**Update Step:**
-
-\begin{align*}
-\hat{\theta}^{[t+1]} &= \hat{\theta}^{[t]} - \eta\nabla\mathcal{R}(\hat{\theta}^{[t]}) \\
-&= \hat{\theta}^{[t]} - \eta g(\hat{\theta}^{[t]})
-\end{align*}
-
--   Learning rate $\eta > 0$
--   Initial parameter vector $\hat{\theta}^{[0]}$
-
-## Federated Averaging - 1
-
--   We now got $K$ different clients
--   Each client holds a local dataset $\mathcal{D}_k$, $k \in \{1, \dots, K\}$ with $n_k$ observations
--   Each dataset gives a risk $\mathcal{R}_k(\theta)$ $\rightarrow$ $g_k(\theta) = \nabla\mathcal{R}_k(\theta)$
-
-\begin{itemize}
-  \item[$\Rightarrow$] How to find a good model (represented by $\hat{\theta}$) optimizing the global empirical Risk but trained on all local datasets
-\end{itemize}
-
-## Federated Averaging - 2
-
-\scriptsize
-
-\begin{Shaded}
-\begin{algorithm}[H]
-  \SetAlgoLined
-  \KwData{$\mathcal{D}_1, \dots, \mathcal{D}_K$}
-  \KwResult{Parameter vector $\hat{\theta}$}
-  \textbf{Initialization:} $\hat{\theta}^{[0]}$ e.g. randomly and set $t = 1$\;
-  \While{Stop criteria is not reached}{
-    Send $\hat{\theta}^{[t-1]}$ to all $K$ clients\;
-    \For{$k = 1$ \KwTo $K$}{
-      Calculate and report $g_k(\hat{\theta}^{[t-1]})$ to host\;
-    }
-    \tcc{Host conduct Federated Averaging step:}
-    $\hat{\theta}^{[t]} = \hat{\theta}^{[t-1]} - \eta \sum\limits_{k = 1}^K \frac{n_k}{n} g_k(\hat{\theta}^{[t-1]})$\;
-    Check if stop criteria is reached, e.g. $\|\hat{\theta}^{[t]} - \hat{\theta}^{[t-1]}\|_2 < \varepsilon$\;
-    Increment $t \leftarrow t + 1$ \;
-  }
-\end{algorithm}
-\end{Shaded}
-
-\normalsize
-
-\pause
-
-This algorithm requires communication between host and clients after each iteration. $\rightarrow$ \alert{Very expensive!}
-
-## Federated Averaging - 3
-
-Instead of making one huge update on the host side, the update is conducted on the client side and aggregate the updates:
-$$
-\gamma_k = \hat{\theta}^{[t-1]} - \eta g_k(\hat{\theta}^{[t-1]})
-$$
-$$
-\Rightarrow\ \hat{\theta}^{[t]} = \hat{\theta}^{[t-1]} - \eta \sum\limits_{k = 1}^K \frac{n_k}{n} g_k(\hat{\theta}^{[t-1]}) = \sum\limits_{k = 1}^K\frac{n_k}{n}\gamma_k
-$$
-Additionally, it is possible to use different methods to aggregate the reported updates:
-$$
-\hat{\theta}^{[t]} = \mathsf{avg}(\gamma_1, \dots, \gamma_K) = \sum\limits_{k = 1}^K \frac{n_k}{n} \gamma_{k}
-$$
-
-## Federated Averaging - 4
-
-\textbf{Host side:} Distribute and collect data
-
-\scriptsize
-
-\begin{Shaded}
-\begin{algorithm}[H]
-  \SetAlgoLined
-  \KwData{$\mathcal{D}_1, \dots, \mathcal{D}_K$}
-  \KwResult{Parameter vector $\hat{\theta}$}
-  \textbf{Initialization:} $\hat{\theta}^{[0]}$ e.g. randomly and set $t = 1$\;
-  \While{Stop criteria is not reached}{
-    Send $\hat{\theta}^{[t-1]}$ to all $K$ clients\;
-    \For{$k = 1$ \KwTo $K$}{
-      $\gamma_k = \mathsf{clientUpdate}(k, \hat{\theta}^{[t-1]})$\;
-      Report $\gamma_{k}$ to host\;
-    }
-    \tcc{Host conduct Federated Averaging step:}
-    $\hat{\theta}^{[t]} = \mathsf{avg}(\gamma_1, \dots, \gamma_K)$\;
-    Check if stop criteria is reached, e.g. $\|\hat{\theta}^{[t]} - \hat{\theta}^{[t-1]}\|_2 < \varepsilon$\;
-    Increment $t \leftarrow t + 1$ \;
-  }
-\end{algorithm}
-\begin{center}{\normalsize Federated Averaging Algorithm}\end{center}
-\end{Shaded}
-
-\normalsize
-
-## Federated Averaging - 5
-
-With the Federated Averaging algorithm we can consider reducing communication costs. Therefore, we conduct $E$ updates in $\mathsf{clientUpdate}$:
-
-\scriptsize
-\begin{Shaded}
-\begin{algorithm}[H]
-  \SetAlgoLined
-  \KwData{$\mathcal{D}_k$ and $\hat{\theta}^{[t-1]}$}
-  \KwResult{$k$-th client update $\gamma_k$}
-  \textbf{Initialization:} $\gamma_{k,0} = \hat{\theta}^{[t-1]}$\;
-  \For{$i = 1$ \KwTo $E$}{
-    $\gamma_{k,i} = \gamma_{k,i-1} - \eta g_k(\gamma_{k,i-1})$\;
-  }
-  Report $\gamma_k = \gamma_{k,E}$ to host\;  
-\end{algorithm}
-\begin{center}{\normalsize $\mathsf{clientUpdate}$ Algorithm}\end{center}
-\end{Shaded}
-\normalsize
-
-<!-- -   Mention problems and how we can tackle them (more steps in one iteration ...) -->
-
-<!-- # Challenges
-
-## Communication Costs vs. Training Costs
-
-## Evaluation of Federated Learning Systems -->
-
-# Example with Logistic Regression
-
-## Example with Logistic Regression
-
-Again, think about the situation from the beginning: 
-
--   There are $4$ hospitals, each with a local dataset
--   The task is to predict whether a patient is sick or not
--   We want to train a logistic regression using the Federated Learning framework
-
-## Data Simulation
-
--   Simulation of $K$ "local datasets" under consideration of different data situations:
-    -   **Setup 1:** Balanced and iid
-    -   **Setup 2:** One variable of dataset 3 gets biased parameters (e.g. damaged sensor)
-    <!-- -   **Setup 3:** Unbalanced but iid  -->
-    <!-- -   **Setup 4:** Unbalanced and non-iid (the parameters are biased depending on the client) -->
-
-
-## Visualization - Setup 1
-
-\includegraphics[width=\textwidth]{images/fed_logreg_iid_01_10.pdf}
-
-## Visualization - Setup 1
-
-\includegraphics[width=\textwidth]{images/fed_logreg_iid_01_1000.pdf}
-
-## Visualization - Setup 2
-
-\includegraphics[width=\textwidth]{images/fed_logreg_non_iid_01_10.pdf}
-
-## Visualization - Setup 2
-
-\includegraphics[width=\textwidth]{images/fed_logreg_non_iid_01_1000.pdf}
-
-<!-- ## Visualization - Setup 3 -->
-
-<!-- \includegraphics[width=\textwidth]{images/fed_logreg_iid_ub_01_10.pdf} -->
-
-<!-- ## Visualization - Setup 4 -->
-
-<!-- \includegraphics[width=\textwidth]{images/fed_logreg_non_iid_ub_01_10.pdf} -->
-
-<!-- ## Visualization - Setup 4 -->
-
-<!-- \includegraphics[width=\textwidth]{images/fed_logreg_non_iid_ub_01_1000.pdf} -->
-
-
-# Boosting and Federated Learning
-
-## Boosting
-
-\begin{align*}
-f^{[t]} &= f^{[0]} + \beta b^{[1]} + \dots + \beta b^{[t]} \\
-&= f^{[t-1]} + \beta b^{[t]}
-\end{align*}
-
--   Sequential fitting of an additive model by training base-learner on the previous error
--   The error is measured as gradient of the given loss function w.r.t. $f$
--   The base-learner $b^{[t]}$ then represents the functional gradient for the update
-<!-- -   Therefore, each iteration reduces the empirical risk on the training data  -->
-
-\begin{itemize}
-\item[$\Rightarrow$] To apply Federated Learning on Boosting we have to aggregate the functional gradient
-\end{itemize}
-
-<!-- ## Centralized Approaches
-
-- Distributed Boosting \cite{lazarevic2001distributed}
-- DiVote \cite{chawla2004learning} (parallel IVote \cite{breiman1999pasting}) 
-- PreWeak \cite{cooper2017improved} -->
-
-<!-- ## Gradient Boosting
-
-In Gradient Boosting we update w.r.t. the model of the previous iteration:
-$$
-f^{[m]}(x^{(i)}) = f^{[m-1]}(x^{(i)}) - \beta^{[m]} r^{[m-1](i)}
-$$
-With
-$$
-r^{[m](i)} = - \left[\frac{\partial}{\partial f} L\left((y^{(i)},f(x^{(i)})\right)\right]_{f = f^{[m]}}
-$$
-
--   The pseudo residuals $r^{[m](i)}$ contain weights how to update $f$ to suite the data
--   How a specific update look like is defined by the type of the base-learner (trees, linear models, ...) -->
-
-<!-- ## The Problem with Boosting and Federated Learning
-
-Applying Federated Learning on the Gradient Boosting algorithm: 
-
--   Average of $K$ pseudo residuals from the clients. **But**:
-    -   The local datasets have different numbers of observations 
-    -   It makes no sense to average weights that contains the direction how to update one specific data point on the client side
-
-$\Rightarrow$ We have to do that separately for each type of base-learner:
-
--   Using GLM base-learner (model-based boosting) should be possibly by applying Federated Learning to GLMs
--   Using tree base-learner should be possible by applying Federated Learning to Trees
--   ... -->
-
-## Federated Learning and Boosting
-
-\includegraphics[width=\textwidth,page=1]{images/federated_boosting.pdf}
-
-## Federated Learning and Boosting
-
-\includegraphics[width=\textwidth,page=2]{images/federated_boosting.pdf}
-\addtocounter{framenumber}{-1}
-
-## Federated Learning and Boosting
-
-\includegraphics[width=\textwidth,page=3]{images/federated_boosting.pdf}
-\addtocounter{framenumber}{-1}
-
-## Federated Learning and Boosting
-
-\includegraphics[width=\textwidth,page=4]{images/federated_boosting.pdf}
-\addtocounter{framenumber}{-1}
-
-## Federated Learning and Boosting
-
-\includegraphics[width=\textwidth,page=5]{images/federated_boosting.pdf}
-\addtocounter{framenumber}{-1}
-
-## Federated Learning and Boosting
-
-\includegraphics[width=\textwidth,page=6]{images/federated_boosting.pdf}
-\addtocounter{framenumber}{-1}
-
-## Federated Learning and Boosting
-
-In iteration $t$:
-
-1.  Each of the $K$ client pulls the actual model $f^{[t-1]}$ and calculates the pseudo residuals $u$ w.r.t. the local dataset $\mathcal{D}_k$
-2.  Given the pseudo residuals, each client calculates the functional gradient $b_k^{[t]}$
-3.  These functional gradients are reported back to the host which applies Federated Averaging to get the final update $b^{[t]}$:
-    $$b^{[t]} = \mathsf{avg}(b_1^{[t]}, \dots, b_K^{[t]})$$
-4.  The final update $b^{[t]}$ is used to get the new model $f^{[t]} = f^{[t-1]} + \beta b^{[t]}$
-
-# What's Next
-
-## Further Topics
-
--   What information is allowed to be shared?
--   Synchronous vs. asynchronous learning 
--   Increase privacy by combining Differential Privacy (\cite{dwork2008differential}) and Federated Learning \cite{geyer2017differentially}
-
-## Further Ideas
-
--   Experiments with different averaging approaches for $\mathsf{avg}(\gamma_1, \dots, \gamma_K)$:
-<!--     -   Use of other optimizer, such as momentum or adagrad
-    -   Reweighting of the updates by applying Bayes theorem
-    -   Train $\mathsf{avg}$ as surrogate model during the fitting process  -->
-
--   Performance evaluation on local datasets during the fitting process
-
--   Assessment of the clients data quality  
-
--   Varying iterations on client side
-
-# References
-
-## {.allowframebreaks .plain}
+## Leave k Datasets Out
 
 \addtocounter{framenumber}{-1}
+\begin{center}
+  \includegraphics[width=0.5\textwidth, page=3]{images/fed_learn_leave_site_out.pdf}\includegraphics[width=0.5\textwidth, page=7]{images/fed_learn_leave_site_out.pdf}
+\end{center}
 
-\scriptsize
-\bibliographystyle{apalike}
-\bibliography{references}
-
-
-# Backup Slides
-
-## Logistic Regression {.plain}
+## Leave k Datasets Out
 
 \addtocounter{framenumber}{-1}
+\begin{center}
+  \includegraphics[width=0.5\textwidth, page=4]{images/fed_learn_leave_site_out.pdf}\includegraphics[width=0.5\textwidth, page=8]{images/fed_learn_leave_site_out.pdf}
+\end{center}
 
-Parts we need to apply Federated Learning:
+Problem: It may happen, that sites have a different data distribution, hence the model doesn't get the chance to learn from this distribution and is not able to predict well.
 
--   **Loss Function/Negative Log-Likelihood** $$L\left(y, f(x, \theta)\right) = -y \log\left(f(x, \theta)\right) - (1 - y) \log\left(1 - f(x, \theta)\right)$$
--   **Response Function** $$f(x, \theta) = \left(1 + \exp\left(-x^T\theta\right)\right)^{-1}$$
--   **Derivative of the Loss Function** $$\frac{\partial}{\partial\theta}L(y,f\left(x,\theta)\right) = x \left(y - f(x,\theta)\right)$$
 
-## Data Simulation - 1 {.plain}
 
-\addtocounter{framenumber}{-1}
+## Partitioning of Individual Datasets
 
--   Correlations are simulated from beta distribution $$r_{ij} \sim B(1,2) \ \ \text{for} \ \ i \neq j,\ r_{ii} = 1$$
--   Dataset is simulated using a multivariate normal distribution $$x^{(i)} \sim N_p(\mu, R)$$
--   Binary labels are generated by sampling from Bernoulli distribution $$ y^{(i)} \sim B\left(1,f(x^{(i)})\right)$$
+-   **Subsampling**: Randomly sample observation used for training and testing
+    \begin{center}
+    \includegraphics[width=0.46\textwidth, page=1]{images/fed_learn_resampling.pdf}\includegraphics[width=0.46\textwidth, page=2]{images/fed_learn_resampling.pdf}
+    \end{center}
 
-## Data Simulation - 2 {.plain}
+    $\rightarrow$ Not all observations are used for training or testing.
 
-\addtocounter{framenumber}{-1}
 
--   We conduct Federated Averaging until the norm of the update $\|\hat{\theta}^{[t]} - \hat{\theta}^{[t-1]}\|_2$ is smaller than $10^{-7}$ for varying learning rates $\eta$ and number of updates at once $E$:
-    -   $\eta \in \{0.001, 0.01, 0.05, 0.1\}$
-    -   $E \in \{1, 10, 100, 1000, 2000\}$
 
-For visualization purposes we simulate the data without intercept and $p = 2$.
+## Partitioning of Individual Datasets
 
-## Visualization - Setup 1 {.plain}
+-   **Cross Validation**: Split individual datasets into k pieces
+    \begin{center}
+    \includegraphics[width=0.46\textwidth, page=1]{images/fed_learn_crossval.pdf}\includegraphics[width=0.46\textwidth, page=2]{images/fed_learn_crossval.pdf}
+    \end{center}
 
-\addtocounter{framenumber}{-1}
 
-\includegraphics[width=\textwidth]{images/fed_logreg_iid.pdf}
 
-## Visualization - Setup 2 {.plain}
+## Practical Difficulties
 
-\addtocounter{framenumber}{-1}
+<!-- Points that require input from other parties -->
 
-\includegraphics[width=\textwidth]{images/fed_logreg_set1.pdf}
+-   What information is allowed to get shared?
 
-## Visualization - Setup 3 {.plain}
+-   No expertise in how to set up and control communication between host and clients:
+    -   What are the requirements (Docker?)
+    -   How expensive is the communication? Is it better to reduce communication?
+    -   What about parallelization?
 
-\addtocounter{framenumber}{-1}
+-   What does the PHT need to fit a model?
 
-\includegraphics[width=\textwidth]{images/fed_logreg_iid_ub.pdf}
 
-## Visualization - Setup 4 {.plain}
 
-\addtocounter{framenumber}{-1}
 
-\includegraphics[width=\textwidth]{images/fed_logreg_ub_non_iid.pdf}
+## Correcting for Features Shifts
+
+Detecting feature shifts of individual datasets to correct them.
+
+-   Assumption: Distribution of observations of individual datasets is equal
+
+-   Train a surrogate model instead of averaging the updates:
+    -   Is it possible to correct the model for these features?
+    -   The surrogate model can be used to give insights about problems of individual datasets.
+
+$\rightarrow$ Train model-based boosting model using the proposed federated learning framework.
